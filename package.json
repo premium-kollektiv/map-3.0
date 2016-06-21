@@ -1,0 +1,27 @@
+{
+  "name": "premium-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify ./js/app.js -o ./build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/premium-cola/map-3.0.git"
+  },
+  "author": "Raphael Wintrich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/premium-cola/map-3.0/issues"
+  },
+  "homepage": "https://github.com/premium-cola/map-3.0#readme",
+  "devDependencies": {
+    "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "jquery": "^3.0.0",
+    "leaflet": "^0.7.7",
+    "geocomplete": "git://github.com/ubilabs/geocomplete.git#master"
+  }
+}
