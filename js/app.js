@@ -8,6 +8,9 @@ var search = require('./search.js');
  */
 var app = {
     init: function() {
+        
+        loader.init();
+        
         if($('#map').length > 0) {
            map.init(); 
         }
@@ -15,6 +18,8 @@ var app = {
         if($('#searchbar').length > 0) {
             search.init();
         }
+        
+        map.loadMarker();
     }
 };
 
@@ -25,3 +30,4 @@ $(document).ready(function(){
     app.init();
     
 });
+

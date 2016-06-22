@@ -20,8 +20,9 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
+    "geocomplete": "git://github.com/ubilabs/geocomplete.git#master",
     "jquery": "^3.0.0",
-    "leaflet": "^0.7.7",
-    "geocomplete": "git://github.com/ubilabs/geocomplete.git#master"
+    "leaflet": "^1.0.0-rc.1",
+    "leaflet.markercluster": "^1.0.0-rc.1.0"
   }
 }

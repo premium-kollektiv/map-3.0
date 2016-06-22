@@ -4,6 +4,7 @@
  */
 
 var session = require('./session.js');
+require('leaflet.markercluster');
 
 /*
  * some data for map data
@@ -16,14 +17,14 @@ MB_URL = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + 
 OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 OSM_ATTRIB = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-var L = require('leaflet');
-
 /*
  * map object to privide all premium map functions
  */
 var map = {
     
     map: null,
+    
+    marker: null,
     
     /*
      * kick off
@@ -33,7 +34,14 @@ var map = {
         /*
          * initiate map
          */
+        L.Icon.Default.imagePath = '/img/marker';
         this.map = L.map('map',{zoomControl:false});
+        
+        /*
+         * marker setup
+         */
+        
+        
         
         /*
          * add tile layers
@@ -88,7 +96,47 @@ var map = {
         });
         
         console.log(session.get('state'));
+    },
+    
+    loadMarker: function() {
+        loader.start();
+        
+        $.ajax({
+            url: '/MOCK_DATA_SIMPLE.json',
+            dataType: 'json',
+            success: function(data) {
+                var markers = L.markerClusterGroup();
+
+                for(i=0;i<data.length;i++) {
+                    //console.log(data[i].id);
+                    
+                    var latlng = [parseFloat(data[i].lat),parseFloat(data[i].lng)];
+                    
+                    markers.addLayer(new L.marker(getRandomLatLng(map.map)));
+                }
+                
+                map.map.addLayer(markers);
+                
+            },
+            complete: function() {
+                loader.stop();
+            }
+        });
+        
     }
 };
+
+
+function getRandomLatLng(map) {
+			var bounds = map.getBounds(),
+				southWest = bounds.getSouthWest(),
+				northEast = bounds.getNorthEast(),
+				lngSpan = northEast.lng - southWest.lng,
+				latSpan = northEast.lat - southWest.lat;
+
+			return new L.LatLng(
+					southWest.lat + latSpan * Math.random(),
+					southWest.lng + lngSpan * Math.random());
+}
 
 module.exports = map;

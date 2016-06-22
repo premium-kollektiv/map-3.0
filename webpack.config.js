@@ -12,13 +12,17 @@ module.exports = {
   plugins: debug ? [
       new webpack.ProvidePlugin({
            $: "jquery",
-           jQuery: "jquery"
+           jQuery: "jquery",
+           L: "leaflet",
+           loader:"./loader.js"
       })
     
   ] : [
     new webpack.ProvidePlugin({
         $: "jquery",
-        jQuery: "jquery"
+        jQuery: "jquery",
+        L: "leaflet",
+        loader:"./loader.js"
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),

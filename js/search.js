@@ -9,6 +9,9 @@ var search = {
         });
         
         $("#searchbar").geocomplete().bind("geocode:result", function(event, result){
+            
+            console.log(result);
+            //map.map.fitBounds();
             map.map.setView([result.geometry.location.lat(),result.geometry.location.lng()],12);
         });
         
