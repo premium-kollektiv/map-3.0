@@ -122,6 +122,7 @@ var map = {
         
         // info button
         $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home border-all" href="#" title="Center"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
+            ev.preventDefault();
             popup.info();
         });
     },

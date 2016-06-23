@@ -2,6 +2,10 @@
 
 Premium map based on leaflet and openstreetmap tiles
 
+## demo
+
+development demo: http://premium.geldfrei.net/
+
 ## Installation on ubuntu-server 16.04
 
 ## install phalcon framework
