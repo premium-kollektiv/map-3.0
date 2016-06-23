@@ -8,6 +8,7 @@ var search = require('./search.js');
  */
 var app = {
     init: function() {
+        popup.init();
         
         loader.init();
         

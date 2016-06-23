@@ -6,16 +6,17 @@
 var session = require('./session.js');
 require('leaflet.markercluster');
 
+
 /*
  * some data for map data
  */
 ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
-MB_ATTR = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="http://mapbox.com">Mapbox</a>';
+MB_ATTR = ' ' +
+			', ' +
+			'';
 MB_URL = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + ACCESS_TOKEN;
 OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-OSM_ATTRIB = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+OSM_ATTRIB = '';
 
 /*
  * map object to privide all premium map functions
@@ -23,6 +24,7 @@ OSM_ATTRIB = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap<
 var map = {
     
     map: null,
+    homeDetected:false,
     
     marker: null,
     
@@ -46,7 +48,7 @@ var map = {
         /*
          * add tile layers
          */
-        L.tileLayer(MB_URL, {attribution: MB_ATTR, id: 'mapbox.streets'}).addTo(this.map);
+        L.tileLayer(MB_URL, {attribution: '', id: 'mapbox.streets'}).addTo(this.map);
         new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 
         /*
@@ -58,6 +60,11 @@ var map = {
         this.map.on('moveend', function(){
             map.saveState()
         });
+        
+        /*
+         * init Controls
+         */
+        this.initControls();
         
         /*
          * check if therre is a state saved in session go to last state
@@ -80,13 +87,43 @@ var map = {
            /*
             * try to locate user
             */
-           if (navigator.geolocation) {
-               navigator.geolocation.getCurrentPosition(function(position){
-                   console.log(position);
-                   map.map.setView([position.coords.latitude, position.coords.longitude], 12);
-               });
-           }
+           this.locateHome();
         }
+    },
+    
+    locateHome: function() {
+        
+        var homeLocation = session.get('homelocation');
+        
+        if(this.homeDetected == false || homeLocation == undefined) {
+            if (navigator.geolocation) {
+               navigator.geolocation.getCurrentPosition(function(position){
+                   map.homeDetected = true;
+                   map.map.setView([position.coords.latitude, position.coords.longitude], 12);
+                   session.set('homelocation',[position.coords.latitude, position.coords.longitude]);
+               });
+            }
+        }
+        else {
+            map.map.setView(homeLocation, 12);
+        }
+    },
+    
+    initControls: function() {
+        
+        // home button
+        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home border-all" href="#" title="Center"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
+            ev.preventDefault();
+            map.locateHome();
+        });
+        
+        $('.leaflet-control-zoom-in').text('').html('<i class="fa fa-plus" aria-hidden="true"></i>');
+        $('.leaflet-control-zoom-out').text('').html('<i class="fa fa-minus" aria-hidden="true"></i>');
+        
+        // info button
+        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home border-all" href="#" title="Center"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
+            popup.info();
+        });
     },
     
     saveState: function() {
@@ -94,8 +131,6 @@ var map = {
            zoom: map.map.getZoom(),
            center: map.map.getCenter()
         });
-        
-        console.log(session.get('state'));
     },
     
     loadMarker: function() {
@@ -105,10 +140,17 @@ var map = {
             url: '/MOCK_DATA_SIMPLE.json',
             dataType: 'json',
             success: function(data) {
-                var markers = L.markerClusterGroup();
+                var markers = L.markerClusterGroup({
+                    polygonOptions: {
+                        fillColor: '#000',
+                        color: '#000',
+                        weight: 4,
+                        opacity: 0.5,
+                        fillOpacity: 0.2
+                    }
+                });
 
                 for(i=0;i<data.length;i++) {
-                    //console.log(data[i].id);
                     
                     var latlng = [parseFloat(data[i].lat),parseFloat(data[i].lng)];
                     

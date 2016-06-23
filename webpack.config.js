@@ -14,7 +14,8 @@ module.exports = {
            $: "jquery",
            jQuery: "jquery",
            L: "leaflet",
-           loader:"./loader.js"
+           loader:"./loader.js",
+           popup:"./popup.js"
       })
     
   ] : [
@@ -22,7 +23,8 @@ module.exports = {
         $: "jquery",
         jQuery: "jquery",
         L: "leaflet",
-        loader:"./loader.js"
+        loader:"./loader.js",
+        popup:"./popup.js"
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),

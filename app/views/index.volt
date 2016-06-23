@@ -17,9 +17,8 @@
   <body>
 
     {{ content() }}
-
     <div id="topbar">
-        <form id="searchform"><input class="border-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+        <form id="searchform"><input class="border-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button></form>
     </div>
     <div id="map" class="map"></div>
 
