@@ -19,9 +19,13 @@ var popup = {
           src: '<div class="white-popup border-all">' + html + '</div>', // can be a HTML string, jQuery object, or CSS selector
           type: 'inline'
         },
-        closeMarkup: '<button title="%title%" type="button" class="mfp-close"><i class="fa fa-times" aria-hidden="true"></i></button>'
+        closeMarkup: '<button onclick="closePopup();" title="%title%" type="button" class="mfp-close"><i class="fa fa-times" aria-hidden="true"></i></button>'
       });
     }
 };
+// dirty fix for chrome to close popup but works :)
+window.closePopup = function() {
+  $.magnificPopup.close();
+}
 
 module.exports = popup;

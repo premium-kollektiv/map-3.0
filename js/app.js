@@ -21,6 +21,8 @@ var app = {
         }
         
         map.loadMarker();
+        
+        
     }
 };
 
