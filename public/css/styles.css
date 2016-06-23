@@ -129,7 +129,11 @@ html, body, .map {
     display:none !important;
 }
 .pac-item-selected, .pac-item-selected:hover {
-    background-color:#ccc;
+    background-color:#000;
+    color:#fff !important;
+}
+.pac-item-selected span, .pac-item-selected:hover span {
+    color:#fff !important;
 }
 .pac-icon {
     display:none !important;
