@@ -151,7 +151,7 @@ var map = {
                     }
                 });
 
-                for(i=0;i<data.length;i++) {
+                for(i=0;i<100;i++) {
                     
                     var latlng = [parseFloat(data[i].lat),parseFloat(data[i].lng)];
                     
