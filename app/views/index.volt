@@ -23,7 +23,7 @@
     <div id="map" class="map"></div>
 
 
-    <script src="http://maps.googleapis.com/maps/api/js?libraries=places&language=de"></script>
+    <script src="//maps.googleapis.com/maps/api/js?libraries=places&language=de"></script>
     <script src="/js/build.js"></script>
   </body>
 </html>
