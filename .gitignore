@@ -1,2 +1,3 @@
 node_modules
 app/cache
+public/js/build.js
