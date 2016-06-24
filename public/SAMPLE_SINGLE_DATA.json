@@ -1,0 +1,9 @@
+{
+    "name": "Peter Lustig",
+    "street": "Am Dom 41",
+    "zip": 50785,
+    "city": "Köln",
+    "web": "www.peter-lustig.de",
+    "email":"peter@gmx.de",
+    "products": ["Cola", "Bier"]
+}
