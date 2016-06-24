@@ -41,9 +41,8 @@ var map = {
         this.map = L.map('map',{zoomControl:false});
         
         /*
-         * marker setup
+         * popup setup
          */
-        
         
         
         /*
@@ -223,14 +222,15 @@ var map = {
              * Lazy loading popup Data
              */
             marker.on('click', function(e) {
-            var popup = e.target.getPopup();
-                    $.ajax({
-                    url: '/SAMPLE_SINGLE_DATA.json?id=' + markers[i].id,
-                        success: function(ret){
-                            popup.setContent(map.popupTpl(ret)+'');
-                            popup.update();
-                        }
-                    });
+                var popup = e.target.getPopup();
+                
+                $.ajax({
+                url: '/SAMPLE_SINGLE_DATA.json?id=' + markers[i].id,
+                    success: function(ret){
+                        popup.setContent(map.popupTpl(ret)+'');
+                        popup.update();
+                    }
+                });
             });
             map.markerLayer.addLayer(marker);
         }
