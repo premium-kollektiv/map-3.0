@@ -3,7 +3,6 @@
  * requirements
  */
 
-var session = require('./session.js');
 require('leaflet.markercluster');
 
 
@@ -11,12 +10,7 @@ require('leaflet.markercluster');
  * some data for map data
  */
 ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
-MB_ATTR = ' ' +
-			', ' +
-			'';
 MB_URL = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + ACCESS_TOKEN;
-OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-OSM_ATTRIB = '';
 
 /*
  * map object to privide all premium map functions
@@ -24,9 +18,16 @@ OSM_ATTRIB = '';
 var map = {
     
     map: null,
+    
+    legend:null,
+    
     homeDetected:false,
     
     marker: null,
+    
+    markerLayer:null,
+    
+    types: ['haendler','laeden','sprecher'],
     
     /*
      * kick off
@@ -88,6 +89,7 @@ var map = {
             * try to locate user
             */
            this.locateHome();
+           
         }
     },
     
@@ -99,20 +101,20 @@ var map = {
             if (navigator.geolocation) {
                navigator.geolocation.getCurrentPosition(function(position){
                    map.homeDetected = true;
-                   map.map.setView([position.coords.latitude, position.coords.longitude], 12);
+                   map.map.setView([position.coords.latitude, position.coords.longitude], 14);
                    session.set('homelocation',[position.coords.latitude, position.coords.longitude]);
                });
             }
         }
         else {
-            map.map.setView(homeLocation, 12);
+            map.map.setView(homeLocation, 14);
         }
     },
     
     initControls: function() {
         
         // home button
-        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home border-all" href="#" title="Center"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="Center"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             map.locateHome();
         });
@@ -121,10 +123,47 @@ var map = {
         $('.leaflet-control-zoom-out').text('').html('<i class="fa fa-minus" aria-hidden="true"></i>');
         
         // info button
-        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home border-all" href="#" title="Center"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="Center"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             popup.info();
         });
+        
+        this.initLegend();
+    },
+    
+    initLegend: function() {
+        
+        var session_types = session.get('types');
+        
+        if(session_types == undefined) {
+            session_types = map.types;
+            session.set('types',session_types);
+        }
+        
+        this.legend = $('#topbar .bt');
+        
+        $('#topbar .bt:not(.bt-'+session_types.join(',.bt-')+')').addClass('disabled');
+        
+        
+        this.legend.click(function(ev){
+            ev.preventDefault();
+            var $this = $(this);
+            $this.toggleClass('disabled');
+            
+            var types = [];
+            map.legend.each(function(){
+                var $this = $(this);
+                
+                if(!$this.hasClass('disabled')) {
+                    types.push($this.data('type'));
+                }
+            });
+            
+            session.set('types',types);
+            map.loadMarker(types);
+            
+        });
+        
     },
     
     saveState: function() {
@@ -134,52 +173,112 @@ var map = {
         });
     },
     
-    loadMarker: function() {
+    loadMarker: function(types) {
+        
+        
+        
+        if(types == undefined) {
+            var types = map.types;
+        }
+        
         loader.start();
         
         $.ajax({
             url: '/MOCK_DATA_SIMPLE.json',
             dataType: 'json',
+            data:{
+                types:types
+            },
             success: function(data) {
-                var markers = L.markerClusterGroup({
-                    polygonOptions: {
-                        fillColor: '#000',
-                        color: '#000',
-                        weight: 4,
-                        opacity: 0.5,
-                        fillOpacity: 0.2
-                    }
-                });
-
-                for(i=0;i<100;i++) {
-                    
-                    var latlng = [parseFloat(data[i].lat),parseFloat(data[i].lng)];
-                    
-                    markers.addLayer(new L.marker(getRandomLatLng(map.map)));
-                }
-                
-                map.map.addLayer(markers);
-                
+                map.printMarker(data);                
             },
             complete: function() {
                 loader.stop();
             }
         });
         
+    },
+    
+    printMarker: function(markers) {
+        if (map.markerLayer != null) {
+            map.map.removeLayer(map.markerLayer);
+        }
+
+        map.markerLayer = L.markerClusterGroup({
+            polygonOptions: {
+                fillColor: '#000',
+                color: '#000',
+                weight: 4,
+                opacity: 0.5,
+                fillOpacity: 0.2
+            }
+        });
+        
+        for (i = 0; i < 100; i++) {
+
+            var latlng = [parseFloat(markers[i].lat), parseFloat(markers[i].lng)];
+            var marker = new L.marker(getRandomLatLng(map.map));
+            marker.bindPopup('<div style="text-align:center;"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i></div>');
+            /*
+             * Lazy loading popup Data
+             */
+            marker.on('click', function(e) {
+            var popup = e.target.getPopup();
+                    $.ajax({
+                    url: '/SAMPLE_SINGLE_DATA.json?id=' + markers[i].id,
+                        success: function(ret){
+                            popup.setContent(map.popupTpl(ret)+'');
+                            popup.update();
+                        }
+                    });
+            });
+            map.markerLayer.addLayer(marker);
+        }
+
+        map.map.addLayer(map.markerLayer);
+    },
+    
+    popupTpl: function(data) {
+        
+        return '<h2> ' + data.name + ' </h2>' + 
+                '<small>' + data.products.join(', ') + '</small>' +
+               '<p>' + 
+                    data.street + '<br />' + 
+                    data.zip + ' ' + data.city + 
+               '</p>' + 
+               '<p>' +
+                    '<i class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />' +
+                    '<i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email)
+               '</p>';
+        
+    },
+    
+    urlToLink: function(url) {
+        var prefix = 'http://';
+        if (url.substr(0, prefix.length) !== prefix)
+        {
+            url = prefix + url;
+        }
+        
+        return '<a target="_blank" href="' + url + '">' + url.substr(7) + '</a>'
+    },
+    
+    emailToLink: function(email) {
+        return '<a href="mailto:'+email+'">'+email+'</a>';
     }
 };
 
 
 function getRandomLatLng(map) {
-			var bounds = map.getBounds(),
-				southWest = bounds.getSouthWest(),
-				northEast = bounds.getNorthEast(),
-				lngSpan = northEast.lng - southWest.lng,
-				latSpan = northEast.lat - southWest.lat;
+    var bounds = map.getBounds(),
+            southWest = bounds.getSouthWest(),
+            northEast = bounds.getNorthEast(),
+            lngSpan = northEast.lng - southWest.lng,
+            latSpan = northEast.lat - southWest.lat;
 
-			return new L.LatLng(
-					southWest.lat + latSpan * Math.random(),
-					southWest.lng + lngSpan * Math.random());
+    return new L.LatLng(
+            southWest.lat + latSpan * Math.random(),
+            southWest.lng + lngSpan * Math.random());
 }
 
 module.exports = map;

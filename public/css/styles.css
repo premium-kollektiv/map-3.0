@@ -26,6 +26,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+        overflow: hidden;
 }
 ol, ul {
 	list-style: none;
@@ -70,7 +71,7 @@ html, body, .map {
     -moz-box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.45);
     box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.45);
 }
-.border-all {
+.corner-all {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -86,45 +87,71 @@ html, body, .map {
     top: 0;
     z-index: 1000;
     width:100%;
+    padding: 12px 12px 0;
 }
 
 
-#searchbar {
+#topbar .bt, #searchbar, #searchbar-icon {
+    display:inline-block;
+    padding:0 8px 0 8px;
+    margin:0;
+    height:46px;
+    font-size:21px;
+    color:#000;
+    font-family: League Gothic,"Helvetica Neue", Arial, Helvetica, sans-serif;
     background-color: #fff;
     border:0;
-    padding:8px 48px 8px 8px;
-    font-family: League Gothic,"Helvetica Neue", Arial, Helvetica, sans-serif;
-    font-size:21px;
-    max-width: 400px;
-    width:74%;
-    height:30px;
-    line-height:30px;
+    line-height: 46px;
+}
+#searchbar {
+    width: 400px;
+    width: -moz-calc(100% - 339px);
+    width: -webkit-calc(100% - 339px);
+    width: -o-calc(100% - 339px);
+    width: calc(100% - 339px);
+    box-sizing: border-box;
+}
+#topbar .bt {
+    
+    margin:0 0 0 12px;
+    font-weight: normal;
+}
+#topbar .bt:hover {
     color:#000;
-    margin:12px;
+    text-decoration: none;
+    background-color: #F4F4F4;
 }
-#searchbar-icon {
-    background: rgba(0, 0, 0, 0) none repeat scroll 0 center;
-    border: 0 none;
-    color: #000;
-    font-size: 30px;
-    margin:0 0 0 -48px;
-    outline: 0 none;
-    padding:0;
-    height:36px;
-    width:36px;
-    padding:0;
+#topbar .bt i{
+    margin-right: 8px;
 }
-#searchbar-icon:focus {
+#topbar .bt:focus {
     outline: 0 !important;
 }
-
-
-#searchbar-icon::-moz-focus-inner {
-  border: 0;
+#topbar .bt.disabled {
+    color:#BBBBBB;
+    background-color: #F4F4F4;
+}
+#searchbar-icon {
+    background-color: transparent;
+    margin-left:-36px;
+    width: 37px;
 }
 
+/* Responsive Stuff */
+@media only screen and (max-width : 748px) {
+    #searchbar {
+        width: -moz-calc(100% - 24px);
+        width: -webkit-calc(100% - 24px);
+        width: -o-calc(100% - 24px);
+        width: calc(100% - 24px);
+        box-sizing: border-box;
+    }
+    #topbar .bt {
+        display:none;
+    }
+}
 
-
+/* geocomplete */
 .pac-logo::after {
     display:none !important;
 }
@@ -138,6 +165,8 @@ html, body, .map {
 .pac-icon {
     display:none !important;
 }
+
+
 
 /*
   FONTS
@@ -429,9 +458,15 @@ html, body, .map {
 	background: #ddd;
 	outline: 0;
 	}
+.leaflet-container small {
+    color:#888;
+}
 .leaflet-container a {
-	color: #0078A8;
+	color: #000;
 	}
+        .leaflet-container a:hover {
+            color:#000;
+        }
 .leaflet-container a.leaflet-active {
 	outline: 2px solid orange;
 	}
@@ -644,7 +679,7 @@ html, body, .map {
 .leaflet-popup-content-wrapper {
 	padding: 1px;
 	text-align: left;
-	border-radius: 12px;
+	border-radius: 3px;
 	}
 .leaflet-popup-content {
 	margin: 13px 19px;

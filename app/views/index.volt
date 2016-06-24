@@ -17,13 +17,15 @@
   <body>
 
     {{ content() }}
+
     <div id="topbar">
-        <form id="searchform"><input class="border-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button></form>
+        <form id="searchform">
+            <input class="corner-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button><a href="#" class="bt bt-laeden corner-all shadow" data-type="laeden"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Läden</a><a class="bt bt-haendler corner-all shadow" href="#" data-type="haendler"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Händler</a><a class="bt bt-sprecher corner-all shadow" href="#" data-type="sprecher"><i class="fa fa-comments" aria-hidden="true"></i> Sprecher</a>
+        </form>
+        
     </div>
     <div id="map" class="map"></div>
 
-
-    <script src="//maps.googleapis.com/maps/api/js?libraries=places&language=de"></script>
     <script src="/js/build.js"></script>
   </body>
 </html>

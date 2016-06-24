@@ -1,7 +1,7 @@
 
-var map = require('./map.js');
 var session = require('./session.js');
 var search = require('./search.js');
+var map = require('./map.js');
 
 /*
  * main app to handle objects
