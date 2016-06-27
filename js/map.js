@@ -127,6 +127,12 @@ var map = {
             popup.info();
         });
         
+        $('.leaflet-top.leaflet-right').prepend('<div class="leaflet-control-menu leaflet-bar leaflet-control"><a class="leaflet-control-menu corner-all" href="#" title="Center"><i class="fa fa-bars" aria-hidden="true"></i></a></div>').click(function(ev){
+            ev.preventDefault();
+            popup.html('...open menu comming soon..');
+            // ... functionallity for show menu...
+        });
+        
         this.initLegend();
     },
     

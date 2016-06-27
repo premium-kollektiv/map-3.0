@@ -98,13 +98,13 @@ textarea, input {
     display:inline-block;
     padding:0 8px 0 8px;
     margin:0;
-    height:46px;
-    font-size:21px;
+    height:39px;
+    font-size:20px;
     color:#000;
     font-family: League Gothic,"Helvetica Neue", Arial, Helvetica, sans-serif;
     background-color: #fff;
     border:0;
-    line-height: 46px;
+    line-height: 39px;
 }
 #searchbar {
     width: 400px;
@@ -140,19 +140,7 @@ textarea, input {
     width: 37px;
 }
 
-/* Responsive Stuff */
-@media only screen and (max-width : 748px) {
-    #searchbar {
-        width: -moz-calc(100% - 24px);
-        width: -webkit-calc(100% - 24px);
-        width: -o-calc(100% - 24px);
-        width: calc(100% - 24px);
-        box-sizing: border-box;
-    }
-    #topbar .bt {
-        display:none;
-    }
-}
+
 
 /* geocomplete */
 .pac-logo::after {
@@ -336,6 +324,9 @@ textarea, input {
 	z-index: 1000;
 	pointer-events: none;
 	}
+.leaflet-top.leaflet-right {
+    display:none;
+}
 .leaflet-top {
 	top: 0;
 	}
@@ -918,8 +909,8 @@ Vector Marker
   max-width: 500px;
   margin: 20px auto;
   -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 /* Magnific Popup CSS */
@@ -1273,3 +1264,21 @@ img.mfp-img {
   .mfp-container {
     padding-left: 6px;
     padding-right: 6px; } }
+
+
+/* Responsive Stuff */
+@media only screen and (max-width : 748px) {
+    #searchbar {
+        width: -moz-calc(100% - 74px);
+        width: -webkit-calc(100% - 74px);
+        width: -o-calc(100% - 74px);
+        width: calc(100% - 74px);
+        box-sizing: border-box;
+    }
+    .leaflet-top.leaflet-right {
+        display: block;
+    }
+    #topbar .bt {
+        display:none;
+    }
+}
