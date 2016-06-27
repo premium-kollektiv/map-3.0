@@ -1269,10 +1269,10 @@ img.mfp-img {
 /* Responsive Stuff */
 @media only screen and (max-width : 748px) {
     #searchbar {
-        width: -moz-calc(100% - 74px);
-        width: -webkit-calc(100% - 74px);
-        width: -o-calc(100% - 74px);
-        width: calc(100% - 74px);
+        width: -moz-calc(100% - 76px);
+        width: -webkit-calc(100% - 76px);
+        width: -o-calc(100% - 76px);
+        width: calc(100% - 76px);
         box-sizing: border-box;
     }
     .leaflet-top.leaflet-right {
