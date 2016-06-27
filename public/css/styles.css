@@ -108,10 +108,10 @@ textarea, input {
 }
 #searchbar {
     width: 400px;
-    width: -moz-calc(100% - 339px);
-    width: -webkit-calc(100% - 339px);
-    width: -o-calc(100% - 339px);
-    width: calc(100% - 339px);
+    width: -moz-calc(100% - 330px);
+    width: -webkit-calc(100% - 330px);
+    width: -o-calc(100% - 330px);
+    width: calc(100% - 330px);
     box-sizing: border-box;
 }
 #topbar .bt {
