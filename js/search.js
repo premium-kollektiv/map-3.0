@@ -9,10 +9,6 @@ var search = {
             search.gcallback();
         }
         
-        $('#searchform').submit(function(ev){
-            ev.preventDefault();
-        });
-        
         
         $.getScript('//maps.googleapis.com/maps/api/js?libraries=places&language=de&callback=gcallback',function(){
             

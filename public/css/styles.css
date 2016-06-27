@@ -92,7 +92,12 @@ textarea, input {
     width:100%;
     padding: 12px 12px 0;
 }
-
+#search {
+    float:left;
+}
+#tools {
+    float:right;
+}
 
 #topbar .bt, #searchbar, #searchbar-icon {
     display:inline-block;
@@ -113,6 +118,21 @@ textarea, input {
     width: -o-calc(100% - 330px);
     width: calc(100% - 330px);
     box-sizing: border-box;
+}
+#search {
+    width: 400px;
+    width: -moz-calc(100% - 330px);
+    width: -webkit-calc(100% - 330px);
+    width: -o-calc(100% - 330px);
+    width: calc(100% - 330px);
+    box-sizing: border-box;
+}
+#tools {
+    width: 330px;
+}
+
+#searchbar {
+    width:100%;
 }
 #topbar .bt {
     
@@ -136,7 +156,7 @@ textarea, input {
 }
 #searchbar-icon {
     background-color: transparent;
-    margin-left:-36px;
+    margin: 0 -37px;
     width: 37px;
 }
 
@@ -1268,7 +1288,7 @@ img.mfp-img {
 
 /* Responsive Stuff */
 @media only screen and (max-width : 748px) {
-    #searchbar {
+    #search {
         width: -moz-calc(100% - 76px);
         width: -webkit-calc(100% - 76px);
         width: -o-calc(100% - 76px);
@@ -1278,7 +1298,18 @@ img.mfp-img {
     .leaflet-top.leaflet-right {
         display: block;
     }
-    #topbar .bt {
+    #tools {
+        width:100%;
+        float: left;
+        margin-top: 12px;
+    }
+    .mobile-hidden {
         display:none;
+    }
+    .bt-laeden{
+      margin-left:0px !important;  
+    }
+    #topbar .bt {
+        
     }
 }

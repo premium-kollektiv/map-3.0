@@ -27,6 +27,8 @@ var map = {
     
     markerLayer:null,
     
+    tools: null,
+    
     types: ['haendler','laeden','sprecher'],
     
     /*
@@ -41,9 +43,9 @@ var map = {
         this.map = L.map('map',{zoomControl:false});
         
         /*
-         * popup setup
+         * tools setup
          */
-        
+        this.tools = $('#tools');
         
         /*
          * add tile layers
@@ -122,15 +124,14 @@ var map = {
         $('.leaflet-control-zoom-out').text('').html('<i class="fa fa-minus" aria-hidden="true"></i>');
         
         // info button
-        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="Center"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="zu meinem Standort"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             popup.info();
         });
         
-        $('.leaflet-top.leaflet-right').prepend('<div class="leaflet-control-menu leaflet-bar leaflet-control"><a class="leaflet-control-menu corner-all" href="#" title="Center"><i class="fa fa-bars" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-top.leaflet-right').prepend('<div class="leaflet-control-menu leaflet-bar leaflet-control"><a class="leaflet-control-menu corner-all" href="#" title="Öffne Menü"><i class="fa fa-bars" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
-            popup.html('...open menu comming soon..');
-            // ... functionallity for show menu...
+            map.tools.toggleClass('mobile-hidden');
         });
         
         this.initLegend();
