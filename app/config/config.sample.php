@@ -1,15 +1,15 @@
 <?php
 
-return new \Phalcon\Config(array(
-    'database' => array(
+return new \Phalcon\Config([
+    'database' => [
         'adapter'     => 'Mysql',
         'host'        => 'localhost',
-        'username'    => 'root',
+        'username'    => '',
         'password'    => '',
-        'dbname'      => 'test',
+        'dbname'      => '',
         'charset'     => 'utf8',
-    ),
-    'application' => array(
+    ],
+    'application' => [
         'controllersDir' => __DIR__ . '/../../app/controllers/',
         'modelsDir'      => __DIR__ . '/../../app/models/',
         'migrationsDir'  => __DIR__ . '/../../app/migrations/',
@@ -17,6 +17,12 @@ return new \Phalcon\Config(array(
         'pluginsDir'     => __DIR__ . '/../../app/plugins/',
         'libraryDir'     => __DIR__ . '/../../app/library/',
         'cacheDir'       => __DIR__ . '/../../app/cache/',
-        'baseUri'        => '/premium/',
-    )
-));
+        'baseUri'        => '/',
+    ],
+    'collmex' => [
+        'user' => 'xxx',
+        'password' => 'xxx',
+        'customer_id' => '12345'
+    ]
+]);
+

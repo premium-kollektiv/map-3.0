@@ -60,12 +60,27 @@ sudo apt-get install nodejs npm
 
 ```sh
 npm install
+composer install
 ```
 
 ## build
 
 ```sh
 NODE_ENV=production webpack
+```
+
+## configuration
+
+copy config template
+
+```sh
+cp ./app/config/config.sample.php ./app/config/config.php
+```
+
+edit config vars for mysql connection and collmex api connection
+
+```sh
+nano ./app/config/config.php
 ```
 
 ## point host to public folder..
