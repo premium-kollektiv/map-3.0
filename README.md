@@ -83,6 +83,12 @@ edit config vars for mysql connection and collmex api connection
 nano ./app/config/config.php
 ```
 
+## run collmex sync
+
+```sh
+php app/cli.php update
+```
+
 ## point host to public folder..
 
-## take an outside walk in the park
+## ready! :)

@@ -2,11 +2,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-
-
-
 use Phalcon\Di\FactoryDefault\Cli as CliDI,
-    Phalcon\Cli\Console as ConsoleApp;
+    Phalcon\Cli\Console as ConsoleApp,
+    Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 
 /**
  * include external dependencies
@@ -26,18 +24,22 @@ defined('APPLICATION_PATH')
  * Register the autoloader and tell it to register the tasks directory
  */
 $loader = new \Phalcon\Loader();
-$loader->registerDirs(
-    array(
-        APPLICATION_PATH . '/tasks'
-    )
-);
-$loader->register();
+$loader->registerDirs([
+    APPLICATION_PATH . '/tasks',
+    APPLICATION_PATH . '/controllers',
+    APPLICATION_PATH . '/models'
+])->register();
 
 // Load the configuration file (if any)
 if (is_readable(APPLICATION_PATH . '/config/config.php')) {
     $config = include APPLICATION_PATH . '/config/config.php';
     $di->set('config', $config);
+    
+    $di->set('db', function () use ($config) {
+        return new DbAdapter($config->database->toArray());
+    });
 }
+
 
 // Create a console application
 $console = new ConsoleApp();

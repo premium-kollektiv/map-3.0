@@ -54,7 +54,7 @@ $di->set('view', function () use ($config) {
  * Database connection is created based in the parameters defined in the configuration file
  */
 $di->set('db', function () use ($config) {
-    return new DbAdapter($config->toArray());
+    return new DbAdapter($config->database->toArray());
 });
 
 /**
@@ -72,4 +72,11 @@ $di->set('session', function () {
     $session->start();
 
     return $session;
+});
+
+$di->set('router', function () use ($config) {
+    
+    include $config->application->configDir . 'router.php';
+    
+    return $router;
 });
