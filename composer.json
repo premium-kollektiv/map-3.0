@@ -1,0 +1,12 @@
+{
+    "name": "raphi/premium-map",
+    "require": {
+        "mjaschen/collmex": "^0.6.2"
+    },
+    "authors": [
+        {
+            "name": "Raphael Wintrich",
+            "email": "raphael@geldfrei.net"
+        }
+    ]
+}
