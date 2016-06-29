@@ -24,4 +24,10 @@ class ControllerBase extends Controller
         //Return the response
         return $response;
     }
+    
+    public function jsonResponseError($message = false) {
+        return $this->jsonResponse([
+            'msg' => $message
+        ],0);
+    }
 }

@@ -180,26 +180,17 @@ var map = {
     },
     
     loadMarker: function(types) {
-        
-        
-        
-        if(types == undefined) {
+       
+         if(types == undefined) {
             var types = map.types;
         }
         
-        loader.start();
-        
-        $.ajax({
-            url: '/MOCK_DATA_SIMPLE.json',
-            dataType: 'json',
-            data:{
+        xhr.get('/item/list',{
+            data: {
                 types:types
             },
-            success: function(data) {
-                map.printMarker(data);                
-            },
-            complete: function() {
-                loader.stop();
+            success: function(marker) {
+                map.printMarker(marker); 
             }
         });
         
@@ -220,47 +211,70 @@ var map = {
             }
         });
         
-        for (i = 0; i < 100; i++) {
+        for (i = 0; i<markers.length;i++) {
 
-            var latlng = [parseFloat(markers[i].lat), parseFloat(markers[i].lng)];
-            var marker = new L.marker(getRandomLatLng(map.map));
+            var latlng = [parseFloat(markers[i][1][0]), parseFloat(markers[i][1][1])];
+            var marker = new L.marker(latlng);
+            marker.id = markers[i][0];
+            
             marker.bindPopup('<div style="text-align:center;"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i></div>');
             /*
              * Lazy loading popup Data
              */
             marker.on('click', function(e) {
+                
                 var popup = e.target.getPopup();
                 
-                $.ajax({
-                url: '/SAMPLE_SINGLE_DATA.json?id=' + markers[i].id,
+                xhr.get('/item/' + e.target.id,{
                     success: function(ret){
                         popup.setContent(map.popupTpl(ret)+'');
                         popup.update();
-                    }
+                    },
+                    fail: function(ret) {
+                        popup.setContent(ret.msg);
+                        popup.update();
+                    },
+                    loader: false
                 });
             });
+            
             map.markerLayer.addLayer(marker);
+            
         }
 
         map.map.addLayer(map.markerLayer);
+       
     },
     
     popupTpl: function(data) {
         
-        return '<h2> ' + data.name + ' </h2>' + 
+        var out = '<h2> ' + data.name + ' </h2>' + 
                 '<small>' + data.products.join(', ') + '</small>' +
                '<p>' + 
                     data.street + '<br />' + 
                     data.zip + ' ' + data.city + 
                '</p>' + 
-               '<p>' +
-                    '<i class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />' +
-                    '<i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email)
+               '<p>';
+                
+                    if(data.web) {
+                        out += '<i class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />';
+                    }
+                    
+                    if(data.email) {
+                        out += '<i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email);
+                    }
+                    
+                    out +=
                '</p>';
+       
+                return out;
         
     },
     
     urlToLink: function(url) {
+        
+        alert(url);
+        
         var prefix = 'http://';
         if (url.substr(0, prefix.length) !== prefix)
         {

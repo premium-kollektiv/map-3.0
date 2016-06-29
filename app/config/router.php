@@ -8,11 +8,20 @@
     ]);
 
     /*
-     * API Calls
+     * API Call to get list of geolocations
      */
-    $router->add('/api/item/list', [       
+    $router->addGet('/item/list', [       
         'controller' => 'item',
-        'action' => 'list',
+        'action' => 'apiList',
+    ]);
+    
+    /*
+     * get one item
+     */
+    $router->addGet('/item/:int', [
+        'controller' => 'item',
+        'action' => 'apiGet',
+        'id' => 1
     ]);
     
     /*

@@ -14,12 +14,42 @@ class ItemController extends ControllerBase
         $this->persistent->parameters = null;
     }
 
-    public function listAction() {
+    /**
+     * get list of marker with geo location
+     * @return json
+     */
+    public function apiListAction() {
         
-        $items = Item::find();
+        $items = Item::listMarker();
+        
         
         return $this->jsonResponse($items);
         
+    }
+    
+    /**
+     * gets one marker item with details
+     * 
+     * @return json
+     */
+    public function apiGetAction() {
+
+        if($id = (int)$this->dispatcher->getParam('id')) {
+            if($item = Item::findFirst($id)) {
+                return $this->jsonResponse([
+                    'id' => (int)$item->id,
+                    'name' => $item->name.'',
+                    'street' => $item->street.'',
+                    'products' => ['Cola', 'Bier'],
+                    'city' => $item->city.'',
+                    'zip' => $item->zip.'',
+                    'web' => $item->url.'',
+                    'email' => $item->email.''
+                ]);
+            }
+        }
+        
+        return $this->jsonResponseError();
     }
     
     /**

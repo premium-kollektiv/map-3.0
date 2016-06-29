@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Mvc\Model\Validator\Email as Email;
+use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
 class Item extends \Phalcon\Mvc\Model
 {
@@ -389,16 +390,45 @@ class Item extends \Phalcon\Mvc\Model
 
         return $this;
     }
+    
     public function getStreetNumber()
     {
         return $this->street_number;
     }
+    
     public function initialize()
     {
         $this->hasMany('id', 'Item_has_offertype', 'item_id', array('alias' => 'Item_has_offertype'));
         $this->hasMany('id', 'Item_has_product', 'item_id', array('alias' => 'Item_has_product'));
         $this->hasMany('id', 'ItemHasOffertype', 'item_id', NULL);
         $this->hasMany('id', 'ItemHasProduct', 'item_id', NULL);
+    }
+    
+    /*
+     * Raw query funcktion for output markers without data overhead
+     */
+    public static function listMarker()
+    {
+        // Base model
+        $item = new Item();
+
+        // Execute the query
+        $result = new Resultset(
+                null, 
+                $item, 
+                $item->getReadConnection()->query
+                ('SELECT id,lat,lng FROM item WHERE lat IS NOT NULL AND lng IS NOT NULL')
+        );
+        
+        $out = [];
+        
+        foreach ($result as $r) {
+            $out[] = [
+                (int)$r->id,[floatval($r->lat),floatval($r->lng)]
+            ];
+        }
+        
+        return $out;
     }
 
 }

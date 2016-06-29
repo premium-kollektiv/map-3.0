@@ -5,7 +5,9 @@ var globalplugins = {
     $: "jquery",
     jQuery: "jquery",
     L: "leaflet",
+    config:"./config.js",
     loader:"./loader.js",
+    xhr:"./xhr.js",
     popup:"./popup.js",
     search:"./search.js",
     session:"./session.js"

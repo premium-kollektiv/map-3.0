@@ -47,10 +47,27 @@ class UpdateTask extends BaseTask
                         echo '*NEW*' ;
                     }
                     
-                    $item->setEmail($data['email']);
+                    /*
+                     * Clean Email Field
+                     */
+                    $email = '';
+                    
+                    if(strpos($data['email'], ',') !== false) {
+                        $emails = explode(',', $data['email']);
+                        $email = trim($emails[0]);
+                    }
+                    else {
+                        $email = trim($data['email']);
+                    }
+                    
+                    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $item->setEmail($data['email']);
+                    }
+                    
+                    
                     $item->setCountry($data['country']);
                     $item->setStreet($data['street']);
-                    $item->setZip($data['zipcode']);
+                    $item->setZip(preg_replace('/[^0-9]/', '', $data['zipcode']));
                     $item->setCity($data['city']);
                     $item->setCollmexCustomerId((int)$data['customer_id']);
                     $item->setName($data['name']);
