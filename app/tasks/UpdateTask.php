@@ -118,15 +118,15 @@ class UpdateTask extends BaseTask
                     $item->setName($data['name']);
 
                     if (!$item->save()) {
-                        echo 'Fehler: cid => ' . $data['customer_id'] . "\n";
+                        echo 'Fehler: cid => ' . $data['customer_id'] . PHP_EOL;
                     }
                 }
             }
 
-            echo "\n";
+            echo PHP_EOL;
 
-            echo $new_records . ' new Map Items' . "\n";
-            echo $updated_records . ' Items Updated' . "\n";
+            echo $new_records . ' new Map Items' . PHP_EOL;
+            echo $updated_records . ' Items Updated' . PHP_EOL;
         }
     }
     
@@ -160,10 +160,10 @@ class UpdateTask extends BaseTask
                 } 
             }
             
-            echo "\n";
+            echo PHP_EOL;
             
-            echo $new_updated_items . ' successful crawled :)' . "\n";
-            echo $faled_items . ' not locateable' . "\n";
+            echo $new_updated_items . ' successful crawled :)' . PHP_EOL;
+            echo $faled_items . ' not locateable' . PHP_EOL;
         }
         
     }
