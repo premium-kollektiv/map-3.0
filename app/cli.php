@@ -1,10 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
 use Phalcon\Di\FactoryDefault\Cli as CliDI,
     Phalcon\Cli\Console as ConsoleApp,
     Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 /**
  * include external dependencies
@@ -14,7 +14,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 define('VERSION', '1.0.0');
 
 // Using the CLI factory default services container
-$di = new CliDI();
+$di = new Phalcon\Di\FactoryDefault\Cli();
 
 // Define path to application directory
 defined('APPLICATION_PATH')
