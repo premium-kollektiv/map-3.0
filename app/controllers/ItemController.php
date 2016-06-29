@@ -21,10 +21,8 @@ class ItemController extends ControllerBase
     public function apiListAction() {
         
         $items = Item::listMarker();
-        
-        
+
         return $this->jsonResponse($items);
-        
     }
     
     /**

@@ -7,64 +7,109 @@ use Phalcon\Config;
 
 class UpdateTask extends BaseTask
 {
-    public function mainAction()
-    {
-        // initialize HTTP client
-        $collmexClient = new CurlClient($this->config->collmex->user, $this->config->collmex->password, $this->config->collmex->customer_id);
+    /*
+     * Collmex request Object
+     */
+    private $collmex;
 
-        // create request object
-        $collmexRequest = new Request($collmexClient);
-        
+    /*
+     * Collmex connected flag
+     */
+    private $collmex_connected;
+
+    private function collmexConnect() {
+
+        if(!$this->collmex_connected) {
+            // initialize HTTP client
+            $collmexClient = new CurlClient($this->config->collmex->user, $this->config->collmex->password, $this->config->collmex->customer_id);
+
+            // create request object
+            $this->collmex = new Request($collmexClient);
+
+            $this->collmex_connected = true;
+        }
+    }
+
+    private function collmexGetCustomer() {
+
+        $this->collmexConnect();
+
         $getCustomerType = new CustomerGet([]);
-    
+
         // send HTTP request and get response object
-        $collmexResponse = $collmexRequest->send($getCustomerType->getCsv());
-        
+        $collmexResponse = $this->collmex->send($getCustomerType->getCsv());
+
         if ($collmexResponse->isError()) {
             echo "Collmex error: " . $collmexResponse->getErrorMessage() . "; Code=" . $collmexResponse->getErrorCode() . PHP_EOL;
         } else {
-            $records = $collmexResponse->getRecords();
+            return $collmexResponse->getRecords();
+        }
+
+        return false;
+    }
+
+    /**
+     * Main Action will check all collmex customers and update them in mysql db
+     * when address has changed geolocation will be set tu null
+     */
+    public function mainAction()
+    {
+        /*
+         * get all customers from collmex
+         */
+        if($records = $this->collmexGetCustomer()) {
+
+            $new_records = 0;
+            $updated_records = 0;
 
             foreach ($records as $record) {
-                
-                if( $data = $this->dataCleanup($record->getData()) )
-                {
-                    echo $data['customer_id'] . ' ' . $data['name'] . ' ';
+
+                if ($data = $this->dataCleanup($record->getData())) {
+                    //echo $data['customer_id'] . ' ' . $data['name'] . ' ';
                     $item = false;
-                    
-                    $item = Item::findFirst('collmex_customer_id = ' . $data['customer_id']);
-                    
-                    if(!$item) {
-                        $item = new Item();
-                        
-                        
-                        $item->geolocate_count = (int)$item->geolocate_count+1;
-                        if($geo = $this->getCoordinates($data['street'] . ', ' . $data['zipcode'] . ', ' . $data['city'] . $this->countryMapper($data['country']))) {
-                            $item->setLat($geo['lat']);
-                            $item->setLng($geo['lng']);
+
+                    /*
+                     * check if item exists by customer_id
+                     * otherwise create new item
+                     */
+                    if ($item = Item::findFirst('collmex_customer_id = ' . (int)$data['customer_id'])) {
+                        /*
+                         * check if address is updatet set coordinates to null
+                         * because while next geo update location will be recrawled
+                         */
+                        if (
+                            $item->street != $data['street'] ||
+                            $item->zip != preg_replace('/[^0-9]/', '', $data['zipcode']) ||
+                            $item->city != $data['city']
+                        ) {
+                            $item->setGeolocateCount(0);
+                            $item->setLat(null);
+                            $item->setLng(null);
                         }
-                        
-                        echo '*NEW*' ;
+
+                        $updated_records++;
+
+                    } else {
+                        $item = new Item();
+                        $new_records++;
                     }
-                    
+
                     /*
                      * Clean Email Field
                      */
                     $email = '';
-                    
-                    if(strpos($data['email'], ',') !== false) {
+
+                    if (strpos($data['email'], ',') !== false) {
                         $emails = explode(',', $data['email']);
                         $email = trim($emails[0]);
-                    }
-                    else {
+                    } else {
                         $email = trim($data['email']);
                     }
-                    
-                    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $item->setEmail($data['email']);
                     }
-                    
-                    
+
                     $item->setCountry($data['country']);
                     $item->setStreet($data['street']);
                     $item->setZip(preg_replace('/[^0-9]/', '', $data['zipcode']));
@@ -72,13 +117,16 @@ class UpdateTask extends BaseTask
                     $item->setCollmexCustomerId((int)$data['customer_id']);
                     $item->setName($data['name']);
 
-                    if(!$item->save()) {
-                        echo 'Fehler: cid => ' . $data['customer_id'];
+                    if (!$item->save()) {
+                        echo 'Fehler: cid => ' . $data['customer_id'] . "\n";
                     }
-                    
-                    echo "\n";
                 }
             }
+
+            echo "\n";
+
+            echo $new_records . ' new Map Items' . "\n";
+            echo $updated_records . ' Items Updated' . "\n";
         }
     }
     
@@ -87,7 +135,7 @@ class UpdateTask extends BaseTask
      */
     public function geoAction() {
         
-        if($items = Item::find()) {
+        if($items = Item::find('geolocate_count < 10')) {
             
             $new_updated_items = 0;
             $faled_items = 0;
@@ -118,6 +166,34 @@ class UpdateTask extends BaseTask
             echo $faled_items . ' not locateable' . "\n";
         }
         
+    }
+
+    /*
+     * only for tests dump all data to csv
+     */
+    public function dumpAction() {
+
+        $fp = fopen('./collmex_data.csv', 'w');
+
+        if($records = $this->collmexGetCustomer()) {
+            $i = 0;
+            foreach ($records as $r) {
+
+                $data = (array)$r->getData();
+
+                if($i==0) {
+                    $titles = [];
+                    foreach ($data as $title => $value) {
+                        $titles[] = $title;
+                    }
+                    fputcsv($fp, $titles);
+                }
+                fputcsv($fp, $data);
+                $i++;
+            }
+        }
+
+        fclose($fp);
     }
     
     /**
