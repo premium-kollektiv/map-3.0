@@ -20,29 +20,39 @@ class UpdateTask extends BaseTask
     private function collmexConnect() {
 
         if(!$this->collmex_connected) {
-            // initialize HTTP client
-            $collmexClient = new CurlClient($this->config->collmex->user, $this->config->collmex->password, $this->config->collmex->customer_id);
 
-            // create request object
-            $this->collmex = new Request($collmexClient);
+            try {
+                // initialize HTTP client
+                $collmexClient = new CurlClient($this->config->collmex->user, $this->config->collmex->password, $this->config->collmex->customer_id);
 
-            $this->collmex_connected = true;
+                // create request object
+                $this->collmex = new Request($collmexClient);
+
+                $this->collmex_connected = true;
+            } catch (Exception $e) {
+                $this->error('Verbindung zu collmex fehlgeschlagen.');
+            }
         }
     }
 
-    private function collmexGetCustomer() {
+    private function collmexCustomerGet() {
 
         $this->collmexConnect();
 
-        $getCustomerType = new CustomerGet([]);
+        try {
+            $getCustomerType = new CustomerGet([]);
 
-        // send HTTP request and get response object
-        $collmexResponse = $this->collmex->send($getCustomerType->getCsv());
+            // send HTTP request and get response object
+            $collmexResponse = $this->collmex->send($getCustomerType->getCsv());
 
-        if ($collmexResponse->isError()) {
-            echo "Collmex error: " . $collmexResponse->getErrorMessage() . "; Code=" . $collmexResponse->getErrorCode() . PHP_EOL;
-        } else {
-            return $collmexResponse->getRecords();
+            if ($collmexResponse->isError()) {
+                echo "Collmex error: " . $collmexResponse->getErrorMessage() . "; Code=" . $collmexResponse->getErrorCode() . PHP_EOL;
+            } else {
+                return $collmexResponse->getRecords();
+            }
+        } catch (Exception $e) {
+
+            $this->error('Verbindung zu collmex fehlgeschlagen.');
         }
 
         return false;
@@ -57,29 +67,32 @@ class UpdateTask extends BaseTask
         /*
          * get all customers from collmex
          */
-        if($records = $this->collmexGetCustomer()) {
+        if($records = $this->collmexAddressGet()) {
 
             $new_records = 0;
             $updated_records = 0;
 
             foreach ($records as $record) {
 
-                if ($data = $this->dataCleanup($record->getData())) {
+
+
+                if ($data = $this->addressCleanup($record)) {
                     //echo $data['customer_id'] . ' ' . $data['name'] . ' ';
+
                     $item = false;
 
                     /*
                      * check if item exists by customer_id
                      * otherwise create new item
                      */
-                    if ($item = Item::findFirst('collmex_customer_id = ' . (int)$data['customer_id'])) {
+                    if ($item = Item::findFirst('collmex_address_id = ' . (int)$data['address_id'])) {
                         /*
                          * check if address is updatet set coordinates to null
                          * because while next geo update location will be recrawled
                          */
                         if (
                             $item->street != $data['street'] ||
-                            $item->zip != preg_replace('/[^0-9]/', '', $data['zipcode']) ||
+                            $item->zip != preg_replace('/[^0-9]/', '', $data['zip']) ||
                             $item->city != $data['city']
                         ) {
                             $item->setGeolocateCount(0);
@@ -112,9 +125,9 @@ class UpdateTask extends BaseTask
 
                     $item->setCountry($data['country']);
                     $item->setStreet($data['street']);
-                    $item->setZip(preg_replace('/[^0-9]/', '', $data['zipcode']));
+                    $item->setZip(preg_replace('/[^0-9]/', '', $data['zip']));
                     $item->setCity($data['city']);
-                    $item->setCollmexCustomerId((int)$data['customer_id']);
+                    $item->setCollmexCustomerId((int)$data['address_id']);
                     $item->setName($data['name']);
 
                     if (!$item->save()) {
@@ -135,7 +148,7 @@ class UpdateTask extends BaseTask
      */
     public function geoAction() {
         
-        if($items = Item::find('geolocate_count < 10')) {
+        if($items = Item::find('geolocate_count < 20')) {
             
             $new_updated_items = 0;
             $faled_items = 0;
@@ -203,22 +216,26 @@ class UpdateTask extends BaseTask
      * @return boolean
      * 
      */
-    private function dataCleanup($data) {
+    private function addressCleanup($data) {
         
-        if(!isset($data['city']) || !isset($data['zipcode']) || !isset($data['customer_id'])) {
+        if(!isset($data['city']) || !isset($data['zip']) || !isset($data['address_id'])) {
+            return false;
+        }
+
+        if(!$this->checkAddressGroups($data)) {
             return false;
         }
         
-        $data['customer_id'] = (int)$data['customer_id'];
+        $data['address_id'] = (int)$data['address_id'];
         
         $name = '';
-        if(isset($data['firm'])) {
-            $name = trim($data['firm'].'');
+        if(isset($data['name'])) {
+            $name = trim($data['name'].'');
         }
         
 
-        if($name == '' && isset($data['forename']) && isset($data['lastname'])) {
-            $name = trim($data['forename'].' ' . $data['lastname']);
+        if($name == '' && isset($data['firstname']) && isset($data['surname'])) {
+            $name = trim($data['firstname'].' ' . $data['surname']);
         }
         
         if(substr($name, 0,1) == '"' && substr($name, -1) == '"') {
@@ -229,5 +246,18 @@ class UpdateTask extends BaseTask
 
         return $data;
         
+    }
+
+    private function checkAddressGroups($record) {
+        $tmp = explode(',',$record['address_group']);
+
+        $groups = [];
+        foreach ($groups as $key => $value) {
+            $groups[(int)$value] = $value;
+        }
+
+        // todo: address group check before insert
+
+        return true;
     }
 }
