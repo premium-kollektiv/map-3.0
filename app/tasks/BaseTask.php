@@ -72,6 +72,14 @@ class BaseTask extends \Phalcon\Cli\Task
 
     public function collmexAddressGet() {
 
+        // dev caching
+        if(file_exists('/tmp/collmexAddressGet.tmp')) {
+            echo "load cached items\n";
+            $data = unserialize(file_get_contents('/tmp/collmexAddressGet.tmp'));
+
+            return $data;
+        }
+
         if($data = $this->collmexGet('ADDRESS_GET')){
             $out = [];
             foreach ($data as $d) {
@@ -93,6 +101,7 @@ class BaseTask extends \Phalcon\Cli\Task
                     ];
                 }
             }
+            file_put_contents('/tmp/collmexAddressGet.tmp',serialize($out));
             return $out;
         }
         return false;
@@ -116,5 +125,11 @@ class BaseTask extends \Phalcon\Cli\Task
         return $data;
     }
 
+    public function addhttp($url) {
+        if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+            $url = "http://" . $url;
+        }
+        return $url;
+    }
 
 }

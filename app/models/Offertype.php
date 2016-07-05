@@ -91,8 +91,23 @@ class Offertype extends \Phalcon\Mvc\Model
     }
     public function initialize()
     {
+        $this->hasManyToMany(
+            'id',
+            'ItemsOffertypes',
+            'offertype_id',
+            'item_id',
+            'Item',
+            'id',
+            array('alias' => 'items')
+        );
+        /*
         $this->hasMany('id', 'Item_has_offertype', 'offertype_id', array('alias' => 'Item_has_offertype'));
         $this->hasMany('id', 'ItemHasOffertype', 'offertype_id', NULL);
+        */
+    }
+
+    public function getSource() {
+        return 'offertype';
     }
 
 }

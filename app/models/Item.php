@@ -16,7 +16,7 @@ class Item extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    protected $collmex_customer_id;
+    protected $collmex_address_id;
 
     /**
      *
@@ -98,14 +98,14 @@ class Item extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field collmex_customer_id
+     * Method to set the value of field collmex_address_id
      *
-     * @param integer $collmex_customer_id
+     * @param integer $collmex_address_id
      * @return $this
      */
-    public function setCollmexCustomerId($collmex_customer_id)
+    public function setCollmexAddressId($collmex_address_id)
     {
-        $this->collmex_customer_id = $collmex_customer_id;
+        $this->collmex_address_id = $collmex_address_id;
 
         return $this;
     }
@@ -264,13 +264,13 @@ class Item extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field collmex_customer_id
+     * Returns the value of field collmex_address_id
      *
      * @return integer
      */
-    public function getCollmexCustomerId()
+    public function getCollmexAddressId()
     {
-        return $this->collmex_customer_id;
+        return $this->collmex_address_id;
     }
 
     /**
@@ -383,27 +383,62 @@ class Item extends \Phalcon\Mvc\Model
         return $this->geolocate_count;
     }
 
-    
-    public function setStreetNumber($street_number)
+    /**
+     * Validations and business logic
+     */
+    public function validation()
     {
-        $this->street_number = $street_number;
+        // todo... later :)
+        return true;
 
-        return $this;
+        $this->validate(
+            new Email(
+                array(
+                    'field'    => 'email',
+                    'required' => true,
+                )
+            )
+        );
+        if ($this->validationHasFailed() == true) {
+            return false;
+        }
     }
-    
-    public function getStreetNumber()
-    {
-        return $this->street_number;
+
+    public function deleteOffertypes() {
+
+        if($links = ItemHasOffertype::findByItemId($this->id)) {
+
+            foreach ($links as $link) {
+                $link->delete();
+            }
+        }
     }
-    
-    public function initialize()
-    {
-        $this->hasMany('id', 'Item_has_offertype', 'item_id', array('alias' => 'Item_has_offertype'));
-        $this->hasMany('id', 'Item_has_product', 'item_id', array('alias' => 'Item_has_product'));
-        $this->hasMany('id', 'ItemHasOffertype', 'item_id', NULL);
-        $this->hasMany('id', 'ItemHasProduct', 'item_id', NULL);
+
+    public function deleteProducts() {
+
+        if($links = ItemHasProduct::findByItemId($this->id)) {
+            foreach ($links as $link) {
+                $link->delete();
+            }
+        }
     }
-    
+
+    public function getOffertypes() {
+        return $this->offertypes;
+    }
+
+    public function getProducts() {
+        return $this->products;
+    }
+
+    public function setProducts($products) {
+        $this->products = $products;
+    }
+
+    public function setOffertypes($offertypes) {
+        $this->offertypes = $offertypes;
+    }
+
     /*
      * Raw query funcktion for output markers without data overhead
      */
@@ -414,21 +449,88 @@ class Item extends \Phalcon\Mvc\Model
 
         // Execute the query
         $result = new Resultset(
-                null, 
-                $item, 
-                $item->getReadConnection()->query
-                ('SELECT id,lat,lng FROM item WHERE lat IS NOT NULL AND lng IS NOT NULL')
+            null,
+            $item,
+            $item->getReadConnection()->query
+            ('SELECT id,lat,lng FROM item WHERE lat IS NOT NULL AND lng IS NOT NULL')
         );
-        
+
         $out = [];
-        
+
         foreach ($result as $r) {
             $out[] = [
                 (int)$r->id,[floatval($r->lat),floatval($r->lng)]
             ];
         }
-        
+
         return $out;
+    }
+
+    /**
+     * Initialize method for model.
+     */
+    public function initialize()
+    {
+        $this->hasManyToMany(
+            'id',
+            'ItemHasOffertype',
+            'item_id',
+            'offertype_id',
+            'Offertype',
+            'id',
+            array('alias' => 'offertypes')
+        );
+
+        $this->hasManyToMany(
+            'id',
+            'ItemHasProduct',
+            'item_id',
+            'product_id',
+            'Product',
+            'id',
+            array('alias' => 'products')
+        );
+
+        /*
+        $this->hasMany(
+            'id',
+            'Item_has_offertype',
+            'item_id',
+            array('alias' => 'Item_has_offertype')
+        );
+
+        $this->hasMany(
+            'id',
+            'Item_has_product',
+            'item_id',
+            array('alias' => 'Item_has_product')
+        );
+        */
+    }
+
+    /**
+     * Independent Column Mapping.
+     * Keys are the real names in the table and the values their names in the application
+     *
+     * @return array
+     */
+    public function columnMap()
+    {
+        return array(
+            'id' => 'id', 
+            'collmex_address_id' => 'collmex_address_id', 
+            'name' => 'name', 
+            'street' => 'street', 
+            'zip' => 'zip', 
+            'city' => 'city', 
+            'country' => 'country', 
+            'lat' => 'lat', 
+            'lng' => 'lng', 
+            'web' => 'web', 
+            'email' => 'email', 
+            'location_checked' => 'location_checked', 
+            'geolocate_count' => 'geolocate_count'
+        );
     }
 
 }

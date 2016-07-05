@@ -13,9 +13,76 @@ class UpdateTask extends BaseTask
     private $collmex;
 
     /*
+     * static products
+     */
+    private $product_cola;
+
+    private $product_bier;
+
+    private $product_frohlunder;
+
+    private $product_muntermate;
+
+    /*
+     * static offertypes
+     */
+    private $offertype_laden;
+
+    private $offertype_haendler;
+
+    private $offertype_sprecher;
+
+    /*
+     * static collmex products
+     */
+    private $collmex_product_cola;
+
+    private $collmex_product_bier;
+
+    private $collmex_product_frohlunder;
+
+    private $collmex_product_muntermate;
+
+    /*
+     * static collmex offertypes
+     */
+    private $collmex_offertype_sprecher;
+
+    private $collmex_offertype_laden;
+
+    private $collmex_offertype_haendler;
+
+    /*
      * Collmex connected flag
      */
     private $collmex_connected;
+
+    public function initialize()
+    {
+        /*
+         * collect recors as in db scheme static defined
+         */
+        $this->product_cola = Product::findFirst(1);
+        $this->product_bier = Product::findFirst(2);
+        $this->product_frohlunder = Product::findFirst(3);
+        $this->product_muntermate = Product::findFirst(4);
+
+        $this->offertype_laden = Product::findFirst(1);
+        $this->offertype_haendler = Product::findFirst(2);
+        $this->offertype_sprecher = Product::findFirst(3);
+
+        /*
+         * define group ids from collmex
+         */
+        $this->collmex_product_cola = 20;
+        $this->collmex_product_bier = 21;
+        $this->collmex_product_frohlunder = 29;
+        $this->collmex_product_muntermate = 33;
+
+        $this->collmex_offertype_laden = 8;
+        $this->collmex_offertype_haendler = 9;
+        $this->collmex_offertype_sprecher = 7;
+    }
 
     private function collmexConnect() {
 
@@ -71,15 +138,14 @@ class UpdateTask extends BaseTask
 
             $new_records = 0;
             $updated_records = 0;
+            $address_changes = 0;
+            $unused_records = 0;
 
             foreach ($records as $record) {
 
-
-
                 if ($data = $this->addressCleanup($record)) {
-                    //echo $data['customer_id'] . ' ' . $data['name'] . ' ';
 
-                    $item = false;
+                    $item = null;
 
                     /*
                      * check if item exists by customer_id
@@ -91,13 +157,15 @@ class UpdateTask extends BaseTask
                          * because while next geo update location will be recrawled
                          */
                         if (
-                            $item->street != $data['street'] ||
-                            $item->zip != preg_replace('/[^0-9]/', '', $data['zip']) ||
-                            $item->city != $data['city']
+                            $item->getStreet() != $data['street'] ||
+                            $item->getZip() != preg_replace('/[^0-9]/', '', $data['zip']) ||
+                            $item->getCity() != $data['city']
                         ) {
                             $item->setGeolocateCount(0);
                             $item->setLat(null);
                             $item->setLng(null);
+
+                            $address_changes++;
                         }
 
                         $updated_records++;
@@ -120,18 +188,47 @@ class UpdateTask extends BaseTask
                     }
 
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $item->setEmail($data['email']);
+                        $item->setEmail($email);
                     }
 
+                    /*
+                     * save values in model object
+                     */
                     $item->setCountry($data['country']);
                     $item->setStreet($data['street']);
                     $item->setZip(preg_replace('/[^0-9]/', '', $data['zip']));
                     $item->setCity($data['city']);
-                    $item->setCollmexCustomerId((int)$data['address_id']);
+                    $item->setCollmexAddressId((int)$data['address_id']);
                     $item->setName($data['name']);
+                    $item->setWeb($data['web']);
 
+                    $item->deleteOffertypes();
+                    $item->deleteProducts();
+
+                    /*
+                     * Map Offertypes and Products from collmex to Db
+                     */
+                    if($offertypes = $this->mapOffertypes($data['address_group'])) {
+                        $item->setOffertypes($offertypes);
+                    }
+                    /*
+                     * if item has no offertypes delete it
+                     */
+                    else {
+                        $unused_records++;
+                        $item->delete();
+                        continue;
+                    }
+
+                    if($products = $this->mapProducts($data['address_group'])) {
+                        $item->setProducts($products);
+                    }
+
+                    /*
+                     * Save all the funny stuff
+                     */
                     if (!$item->save()) {
-                        echo 'Fehler: cid => ' . $data['customer_id'] . PHP_EOL;
+                        $this->error('could not save item address_id => ' . $data['customer_id']);
                     }
                 }
             }
@@ -140,7 +237,51 @@ class UpdateTask extends BaseTask
 
             echo $new_records . ' new Map Items' . PHP_EOL;
             echo $updated_records . ' Items Updated' . PHP_EOL;
+            echo $address_changes . ' Address changes' . PHP_EOL;
+            echo $unused_records . ' unused Records' . PHP_EOL;
         }
+    }
+
+    public function mapProducts($collmex_group_ids) {
+
+        $out = [];
+
+        if(isset($collmex_group_ids[$this->collmex_product_cola])) {
+            $out[] = $this->product_cola;
+        }
+
+        if(isset($collmex_group_ids[$this->collmex_product_bier])) {
+            $out[] = $this->product_bier;
+        }
+
+        if(isset($collmex_group_ids[$this->collmex_product_frohlunder])) {
+            $out[] = $this->product_frohlunder;
+        }
+
+        if(isset($collmex_group_ids[$this->collmex_product_muntermate])) {
+            $out[] = $this->product_muntermate;
+        }
+
+        return $out;
+    }
+
+    public function mapOffertypes($collmex_group_ids) {
+
+        $out = [];
+
+        if(isset($collmex_group_ids[$this->collmex_offertype_laden])) {
+            $out[] = $this->offertype_laden;
+        }
+
+        if(isset($collmex_group_ids[$this->collmex_offertype_haendler])) {
+            $out[] = $this->offertype_haendler;
+        }
+
+        if(isset($collmex_group_ids[$this->collmex_offertype_sprecher])) {
+            $out[] = $this->offertype_sprecher;
+        }
+
+        return $out;
     }
     
     /*
@@ -217,17 +358,29 @@ class UpdateTask extends BaseTask
      * 
      */
     private function addressCleanup($data) {
-        
+
+        // check is basic fields are exists
         if(!isset($data['city']) || !isset($data['zip']) || !isset($data['address_id'])) {
             return false;
         }
 
-        if(!$this->checkAddressGroups($data)) {
+        /*
+         * Check Address Group Field
+         */
+        $data['address_group'] = $this->checkAddressGroups($data);
+
+        if(!$data['address_group']) {
             return false;
         }
-        
+
+        /*
+         * typecast Address Id
+         */
         $data['address_id'] = (int)$data['address_id'];
-        
+
+        /*
+         * fill name Field
+         */
         $name = '';
         if(isset($data['name'])) {
             $name = trim($data['name'].'');
@@ -241,23 +394,39 @@ class UpdateTask extends BaseTask
         if(substr($name, 0,1) == '"' && substr($name, -1) == '"') {
             $name = substr($name, 1, -1);
         }
-        
         $data['name'] = $name;
+
+        /*
+         * cleanup web address field
+         */
+        $data['web'] = trim($data['web']);
+        if($data['web'] != '') {
+            $data['web'] = $this->addhttp($data['web']);
+        }
 
         return $data;
         
     }
 
+    /*
+     * parse csv simple value to array
+     * then check if item is map item
+     */
     private function checkAddressGroups($record) {
+
         $tmp = explode(',',$record['address_group']);
 
         $groups = [];
-        foreach ($groups as $key => $value) {
-            $groups[(int)$value] = $value;
+        foreach ($tmp as $key => $value) {
+            $groups[(int)$value] = (int)$value;
         }
 
         // todo: address group check before insert
 
-        return true;
+        if(empty($groups)) {
+            return false;
+        }
+
+        return $groups;
     }
 }

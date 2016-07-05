@@ -60,6 +60,7 @@ class ItemHasOffertype extends \Phalcon\Mvc\Model
     {
         return $this->offertype_id;
     }
+    
     public function initialize()
     {
         $this->belongsTo('item_id', 'Item', 'id', array('alias' => 'Item'));
