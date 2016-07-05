@@ -19,8 +19,27 @@ class ItemController extends ControllerBase
      * @return json
      */
     public function apiListAction() {
-        
-        $items = Item::listMarker();
+
+        $options = [];
+
+        if(isset($_GET['types'])) {
+
+            // predefined offertypes look at UpdateTask.php...
+            $types = [
+                'laeden' => 1,
+                'haendler' => 2,
+                'sprecher' => 3
+            ];
+
+            foreach ($_GET['types'] as $type) {
+                if(isset($types[$type])) {
+                    $options[] = $types[$type];
+                }
+            }
+
+        }
+
+        $items = Item::listMarker($options);
 
         return $this->jsonResponse($items);
     }
@@ -34,11 +53,18 @@ class ItemController extends ControllerBase
 
         if($id = (int)$this->dispatcher->getParam('id')) {
             if($item = Item::findFirst($id)) {
+
+                $products = [];
+
+                foreach ($item->products as $p){
+                    $products[] = $p->name;
+                }
+
                 return $this->jsonResponse([
                     'id' => (int)$item->id,
                     'name' => $item->name.'',
                     'street' => $item->street.'',
-                    'products' => ['Cola', 'Bier'],
+                    'products' => $products,
                     'city' => $item->city.'',
                     'zip' => $item->zip.'',
                     'web' => $item->url.'',

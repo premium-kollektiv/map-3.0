@@ -442,28 +442,41 @@ class Item extends \Phalcon\Mvc\Model
     /*
      * Raw query funcktion for output markers without data overhead
      */
-    public static function listMarker()
+    public static function listMarker($offertype_ids = [])
     {
         // Base model
         $item = new Item();
 
+        $sql = '';
+
+        if(!empty($offertype_ids)) {
+            $sql = ' AND ho.offertype_id IN(' . implode(',',$offertype_ids) . ')';
+        }
+
+        $sql = 'SELECT i.id,i.lat,i.lng, ho.offertype_id AS offertype FROM item i, item_has_offertype ho WHERE ho.item_id = i.id AND i.lat IS NOT NULL AND i.lng IS NOT NULL' . $sql;
+
         // Execute the query
-        $result = new Resultset(
-            null,
-            $item,
-            $item->getReadConnection()->query
-            ('SELECT id,lat,lng FROM item WHERE lat IS NOT NULL AND lng IS NOT NULL')
-        );
+        $result = new Resultset(null,$item,$item->getReadConnection()->query($sql));
 
         $out = [];
 
         foreach ($result as $r) {
-            $out[] = [
-                (int)$r->id,[floatval($r->lat),floatval($r->lng)]
+
+            $out[(int)$r->id] = [
+                (int)$r->id,[floatval($r->lat),floatval($r->lng)],[]
             ];
+            $out[(int)$r->id][2][] = (int)$r->offertype;
         }
 
-        return $out;
+        // minifyy data for output
+        $out2 = [];
+        foreach ($out as $o) {
+            $out2[] = $o;
+        }
+
+        unset($out);
+
+        return $out2;
     }
 
     /**

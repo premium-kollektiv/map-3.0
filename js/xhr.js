@@ -14,7 +14,8 @@ var xhr = {
     get: function(url, options) {
         
         var settings = {
-            loader:true
+            loader:true,
+            data:null,
         };
         
         $.extend(settings, options);
@@ -27,6 +28,7 @@ var xhr = {
             url: config.baseUri + url,
             type:'get',
             dataType:'json',
+            data:settings.data,
             success:function(ret) {
                 if(ret.status == 1) {
                     if(settings.success != undefined) {

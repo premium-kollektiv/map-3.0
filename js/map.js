@@ -216,6 +216,8 @@ var map = {
             var latlng = [parseFloat(markers[i][1][0]), parseFloat(markers[i][1][1])];
             var marker = new L.marker(latlng);
             marker.id = markers[i][0];
+
+            console.log(markertype = map.getMarker(markers[i][2]));
             
             marker.bindPopup('<div style="text-align:center;"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i></div>');
             /*
@@ -245,8 +247,31 @@ var map = {
         map.map.addLayer(map.markerLayer);
        
     },
+
+    getMarker: function(offertypes) {
+
+        /*
+             'laeden' => 1,
+             'haendler' => 2,
+             'sprecher' => 3
+         */
+
+        var r = offertypes.join(':')+'';
+
+        if(r == '1')  {
+            return 'laeden';
+        }
+        else if(r == '2') {
+            return 'heandler';
+        }
+        else if(r == '3') {
+            return 'sprecher';
+        }
+    },
     
     popupTpl: function(data) {
+
+        var products = '';
         
         var out = '<h2> ' + data.name + ' </h2>' + 
                 '<small>' + data.products.join(', ') + '</small>' +
