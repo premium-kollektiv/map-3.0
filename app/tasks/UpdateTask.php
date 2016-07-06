@@ -309,9 +309,6 @@ class UpdateTask extends BaseTask
 
                         $address_string = $item->zip . ', ' . $item->city .  $this->countryMapper($item->country);
 
-                    } else
-                    {
-                        continue;
                     }
 
                     if($geo = $this->getCoordinates($address_string)) {
