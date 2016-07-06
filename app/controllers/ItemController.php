@@ -55,16 +55,33 @@ class ItemController extends ControllerBase
             if($item = Item::findFirst($id)) {
 
                 $products = [];
+                
+                $out = [];
 
                 foreach ($item->products as $p){
                     $products[] = $p->name;
                 }
 
+                $offertypes = [];
+                foreach ($item->offertypes as $ot) {
+                    $offertypes[] = $ot->name;
+                }
+
+                $street = $item->street;
+
+                /*
+                 * if only speaker dont send the streenname
+                 */
+                if(count($item->offertypes) == 1 && $item->offertypes[0]->id == 3) {
+                    $street = '';
+                }
+
                 return $this->jsonResponse([
                     'id' => (int)$item->id,
                     'name' => $item->name.'',
-                    'street' => $item->street.'',
+                    'street' => $street.'',
                     'products' => $products,
+                    'offertypes' => $offertypes,
                     'city' => $item->city.'',
                     'zip' => $item->zip.'',
                     'web' => $item->url.'',

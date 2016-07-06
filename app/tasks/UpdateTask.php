@@ -67,9 +67,9 @@ class UpdateTask extends BaseTask
         $this->product_frohlunder = Product::findFirst(3);
         $this->product_muntermate = Product::findFirst(4);
 
-        $this->offertype_laden = Product::findFirst(1);
-        $this->offertype_haendler = Product::findFirst(2);
-        $this->offertype_sprecher = Product::findFirst(3);
+        $this->offertype_laden = Offertype::findFirst(1);
+        $this->offertype_haendler = Offertype::findFirst(2);
+        $this->offertype_sprecher = Offertype::findFirst(3);
 
         /*
          * define group ids from collmex
@@ -298,8 +298,23 @@ class UpdateTask extends BaseTask
                 if(((int)$item->lat == 0) || ((int)$item->lng == 0)) {
                     
                     $item->geolocate_count = (int)$item->geolocate_count+1;
-                    
-                    if($geo = $this->getCoordinates($item->street . ', ' . $item->zip . ', ' . $item->city . $this->countryMapper($item->country))) {
+
+                    $address_string = $item->street . ', ' . $item->zip . ', ' . $item->city . $this->countryMapper($item->country);
+
+                    /*
+                     * change address string to city when offertype is only speaker
+                     */
+
+                    if(count($item->offertypes) == 1 && $item->offertypes[0]->id == $this->offertype_sprecher->id) {
+
+                        $address_string = $item->zip . ', ' . $item->city .  $this->countryMapper($item->country);
+
+                    } else
+                    {
+                        continue;
+                    }
+
+                    if($geo = $this->getCoordinates($address_string)) {
                         $item->setLat($geo['lat']);
                         $item->setLng($geo['lng']);
                         

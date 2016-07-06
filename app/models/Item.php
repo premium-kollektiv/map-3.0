@@ -458,25 +458,19 @@ class Item extends \Phalcon\Mvc\Model
         // Execute the query
         $result = new Resultset(null,$item,$item->getReadConnection()->query($sql));
 
+        echo $sql . PHP_EOL;
+
         $out = [];
 
         foreach ($result as $r) {
 
-            $out[(int)$r->id] = [
-                (int)$r->id,[floatval($r->lat),floatval($r->lng)],[]
-            ];
+            if(!isset($out[(int)$r->id])) {
+                $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
+            }
             $out[(int)$r->id][2][] = (int)$r->offertype;
         }
 
-        // minifyy data for output
-        $out2 = [];
-        foreach ($out as $o) {
-            $out2[] = $o;
-        }
-
-        unset($out);
-
-        return $out2;
+        return array_values($out);
     }
 
     /**

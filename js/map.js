@@ -28,6 +28,12 @@ var map = {
     markerLayer:null,
     
     tools: null,
+
+    icon: {
+        laden: null,
+        haendler: null,
+        sprecher: null
+    },
     
     types: ['haendler','laeden','sprecher'],
     
@@ -41,7 +47,47 @@ var map = {
          */
         L.Icon.Default.imagePath = '/img/marker';
         this.map = L.map('map',{zoomControl:false});
-        
+
+        this.icon.default = new L.icon({
+            iconUrl: '/img/marker/marker-icon.png',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [25, 41], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 40],  // the same for the shadow
+            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+        });
+        this.icon.laden = new L.icon({
+            iconUrl: '/img/marker/marker-icon-l.png',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [25, 41], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 40],  // the same for the shadow
+            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+        });
+        this.icon.haendler = new L.icon({
+            iconUrl: '/img/marker/marker-icon-h.png',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [25, 41], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 40],  // the same for the shadow
+            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+        });
+        this.icon.sprecher = new L.icon({
+            iconUrl: '/img/marker/marker-icon-s.png',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [25, 41], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 40],  // the same for the shadow
+            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+        });
         /*
          * tools setup
          */
@@ -213,11 +259,13 @@ var map = {
         
         for (i = 0; i<markers.length;i++) {
 
-            var latlng = [parseFloat(markers[i][1][0]), parseFloat(markers[i][1][1])];
-            var marker = new L.marker(latlng);
+            var marker = new L.marker([parseFloat(markers[i][1][0]), parseFloat(markers[i][1][1])],{
+                icon: map.getMarker(markers[i][2])
+            });
             marker.id = markers[i][0];
+            marker.offertype = markers[i][2];
 
-            console.log(markertype = map.getMarker(markers[i][2]));
+
             
             marker.bindPopup('<div style="text-align:center;"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i></div>');
             /*
@@ -259,24 +307,35 @@ var map = {
         var r = offertypes.join(':')+'';
 
         if(r == '1')  {
-            return 'laeden';
+            return map.icon.laden;
         }
         else if(r == '2') {
-            return 'heandler';
+            return map.icon.haendler;
         }
         else if(r == '3') {
-            return 'sprecher';
+            return map.icon.sprecher;
+        }
+        else {
+            return map.icon.default;
         }
     },
     
     popupTpl: function(data) {
-
-        var products = '';
         
-        var out = '<h2> ' + data.name + ' </h2>' + 
-                '<small>' + data.products.join(', ') + '</small>' +
+        var out = '<h2> ' + data.name + ' </h2>';
+
+        if(data.products.length > 0) {
+            out += '<small>' + data.products.join(', ') + '</small><br />';
+        }
+
+        if(data.street != '') {
+            data.street = data.street + '<br />';
+        }
+
+        out +=
+
                '<p>' + 
-                    data.street + '<br />' + 
+                    data.street +
                     data.zip + ' ' + data.city + 
                '</p>' + 
                '<p>';
