@@ -201,6 +201,7 @@ class UpdateTask extends BaseTask
                     $item->setCollmexAddressId((int)$data['address_id']);
                     $item->setName($data['name']);
                     $item->setWeb($data['web']);
+                    $item->setPhone($data['phone']);
 
                     $item->deleteOffertypes();
                     $item->deleteProducts();

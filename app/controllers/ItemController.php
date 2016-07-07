@@ -84,8 +84,9 @@ class ItemController extends ControllerBase
                     'offertypes' => $offertypes,
                     'city' => $item->city.'',
                     'zip' => $item->zip.'',
-                    'web' => $item->url.'',
-                    'email' => $item->email.''
+                    'web' => $item->web.'',
+                    'email' => $item->email.'',
+                    'phone' => $item->phone
                 ]);
             }
         }

@@ -56,7 +56,7 @@ var map = {
             shadowSize:   [41, 41], // size of the shadow
             iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
             shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.laden = new L.icon({
             iconUrl: '/img/marker/marker-icon-l.png',
@@ -66,7 +66,7 @@ var map = {
             shadowSize:   [41, 41], // size of the shadow
             iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
             shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.haendler = new L.icon({
             iconUrl: '/img/marker/marker-icon-h.png',
@@ -76,7 +76,7 @@ var map = {
             shadowSize:   [41, 41], // size of the shadow
             iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
             shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.sprecher = new L.icon({
             iconUrl: '/img/marker/marker-icon-s.png',
@@ -86,7 +86,7 @@ var map = {
             shadowSize:   [41, 41], // size of the shadow
             iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
             shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [0, -48] // point from which the popup should open relative to the iconAnchor
+            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
         });
         /*
          * tools setup
@@ -341,11 +341,15 @@ var map = {
                '<p>';
                 
                     if(data.web) {
-                        out += '<i class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />';
+                        out += '<i style="width:12px;" class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />';
                     }
                     
                     if(data.email) {
-                        out += '<i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email);
+                        out += '<i style="width:12px;" class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email) + '<br />';
+                    }
+
+                    if(data.phone) {
+                        out += '<i style="width:12px;" class="fa fa-phone" aria-hidden="true"></i> &nbsp;' + map.phoneToLink(data.phone) + '<br />';
                     }
                     
                     out +=
@@ -354,10 +358,12 @@ var map = {
                 return out;
         
     },
+
+    phoneToLink: function(phone) {
+        return '<a href="tel:' + phone.replace(/^[0-9\+]/g,'') + '">' + phone + '</a>';
+    },
     
     urlToLink: function(url) {
-        
-        alert(url);
         
         var prefix = 'http://';
         if (url.substr(0, prefix.length) !== prefix)

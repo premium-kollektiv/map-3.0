@@ -144,9 +144,6 @@ textarea, input {
     text-decoration: none;
     background-color: #F4F4F4;
 }
-#topbar .bt i{
-    margin-right: 8px;
-}
 #topbar .bt:focus {
     outline: 0 !important;
 }
@@ -154,12 +151,41 @@ textarea, input {
     color:#BBBBBB;
     background-color: #F4F4F4;
 }
+#topbar .bt.disabled i{
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+	filter: alpha(opacity=30);
+	-moz-opacity: 0.3;
+	-khtml-opacity: 0.3;
+	opacity: 0.3;
+}
 #searchbar-icon {
     background-color: transparent;
     margin: 0 -37px;
     width: 37px;
 }
 
+/* icons */
+i.icon {
+	display:inline-block;
+	background-repeat: no-repeat;
+	width:26px;
+	height:26px;
+	position:relative;
+	top:5px;
+	background-position: center;
+	margin-right:5px;
+}
+i.icon.icon-laden {
+	background-image: url("/img/icon-laden-24x24.png");
+	width:20px;
+	margin-right:0px;
+}
+i.icon.icon-haendler {
+	background-image: url("/img/icon-haendler-24x24.png");
+}
+i.icon.icon-sprecher {
+	background-image: url("/img/icon-sprecher-24x24.png");
+}
 
 
 /* geocomplete */

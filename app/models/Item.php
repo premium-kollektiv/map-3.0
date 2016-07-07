@@ -74,6 +74,12 @@ class Item extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var string
+     */
+    protected $phone;
+
+    /**
+     *
      * @var integer
      */
     protected $location_checked;
@@ -228,6 +234,19 @@ class Item extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field phone
+     *
+     * @param string $phone
+     * @return $this
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
      * Method to set the value of field location_checked
      *
      * @param integer $location_checked
@@ -361,6 +380,16 @@ class Item extends \Phalcon\Mvc\Model
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Returns the value of field phone
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 
     /**
@@ -534,7 +563,8 @@ class Item extends \Phalcon\Mvc\Model
             'lat' => 'lat', 
             'lng' => 'lng', 
             'web' => 'web', 
-            'email' => 'email', 
+            'email' => 'email',
+            'phone' => 'phone',
             'location_checked' => 'location_checked', 
             'geolocate_count' => 'geolocate_count'
         );
