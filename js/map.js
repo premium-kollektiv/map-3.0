@@ -364,18 +364,46 @@ var map = {
     },
     
     urlToLink: function(url) {
+
+        console.log(url);
         
         var prefix = 'http://';
-        if (url.substr(0, prefix.length) !== prefix)
+
+        if (url.substr(0, prefix.length) != prefix)
         {
             url = prefix + url;
         }
+
+        var viewurl = url.substr(7);
+
+        if(viewurl.substr(-1) == '/') {
+            viewurl = viewurl.substr(0,(viewurl.length-1));
+        }
+
+        if(viewurl.substr(0,4) == 'www.') {
+            viewurl = viewurl.substr(4);
+        }
+
+        console.log(viewurl);
         
-        return '<a target="_blank" href="' + url + '">' + url.substr(7) + '</a>'
+        return '<a target="_blank" href="' + url + '">' + map.shorten(viewurl) + '</a>'
     },
     
     emailToLink: function(email) {
-        return '<a href="mailto:'+email+'">'+email+'</a>';
+        return '<a href="mailto:'+email+'">' + map.shorten(email) + '</a>';
+    },
+
+    shorten: function(string, length) {
+
+        if(length == undefined) {
+            length = 30;
+        }
+
+        if(string.length > length) {
+            return string.substr(0,(length-3)) + '...';
+        }
+
+        return string;
     }
 };
 
