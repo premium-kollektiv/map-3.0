@@ -20,10 +20,10 @@ class ItemController extends ControllerBase
      */
     public function apiListAction() {
 
-        $options = [];
+        $options = [1=>true,2=>true,3=>true];
 
         if(isset($_GET['types'])) {
-
+            $options = [];
             // predefined offertypes look at UpdateTask.php...
             $types = [
                 'laeden' => 1,
@@ -33,15 +33,60 @@ class ItemController extends ControllerBase
 
             foreach ($_GET['types'] as $type) {
                 if(isset($types[$type])) {
-                    $options[] = $types[$type];
+                    $options[(int)$types[$type]] = true;
                 }
             }
 
         }
 
-        $items = Item::listMarker($options);
+        $items = Item::listMarker();
 
-        return $this->jsonResponse($items);
+        /*
+         * simple output
+         */
+        /*
+        $out = [];
+        foreach ($items as $r) {
+            $out[] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[(int)$r->offertype]];
+        }
+
+        return $this->jsonResponse(array_values($out));
+        */
+        
+        /*
+         * reduce data outut
+         */
+        $out = [];
+
+        foreach ($items as $r) {
+
+            if(!isset($out[(int)$r->id])) {
+                $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
+            }
+            $out[(int)$r->id][2][] = (int)$r->offertype;
+        }
+
+
+        /*
+         * filter items by offertype but send all offertypes of each item
+         */
+        $out2 = [];
+        foreach ($out as $r) {
+
+            $check = false;
+
+            foreach ($r[2] as $offertype) {
+                if(isset($options[$offertype])) {
+                    $check = true;
+                }
+            }
+            if($check) {
+                $out2[] = $r;
+            }
+
+        }
+
+        return $this->jsonResponse(array_values($out2));
     }
     
     /**

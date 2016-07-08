@@ -130,7 +130,7 @@ var map = {
            /*
             * set map in center of germany
             */
-           this.map.setView([50.93766174471314,9.777832031250002], 6);
+           this.map.setView([50.93766174471314,9.777832031250002], 7);
 
            /*
             * try to locate user
@@ -248,6 +248,7 @@ var map = {
         }
 
         map.markerLayer = L.markerClusterGroup({
+            maxClusterRadius:60,
             polygonOptions: {
                 fillColor: '#000',
                 color: '#000',
@@ -324,7 +325,10 @@ var map = {
         
         var out = '<h2> ' + data.name + ' </h2>';
 
-        if(data.products.length > 0) {
+        console.log(data);
+
+        // hide when only speaker
+        if(data.products.length > 0 && false == (data.offertypes.length == 1 && data.offertypes[0] == 'Sprecher')) {
             out += '<small>' + data.products.join(', ') + '</small><br />';
         }
 

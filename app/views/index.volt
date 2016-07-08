@@ -7,7 +7,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     
 
-    <title>Premium Maps</title>
+    <title>Premium-Landkarte</title>
 
     <link href="/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="/css/styles.css" rel="stylesheet" />
