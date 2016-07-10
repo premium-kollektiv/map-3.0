@@ -36,6 +36,9 @@ var map = {
     },
     
     types: ['haendler','laeden','sprecher'],
+
+    homelocation_default: [50.93766174471314,9.777832031250002],
+    homelocation_default_zoom: 7,
     
     /*
      * kick off
@@ -130,7 +133,7 @@ var map = {
            /*
             * set map in center of germany
             */
-           this.map.setView([50.93766174471314,9.777832031250002], 7);
+           this.map.setView(this.homelocation_default, this.homelocation_default_zoom);
 
            /*
             * try to locate user
@@ -145,11 +148,15 @@ var map = {
         var homeLocation = session.get('homelocation');
         
         if(this.homeDetected == false || homeLocation == undefined) {
+
             if (navigator.geolocation) {
-               navigator.geolocation.getCurrentPosition(function(position){
+                navigator.geolocation.getCurrentPosition(function(position){
                    map.homeDetected = true;
                    map.map.setView([position.coords.latitude, position.coords.longitude], 14);
                    session.set('homelocation',[position.coords.latitude, position.coords.longitude]);
+               },function(){
+                   // wenn keine standortabfrage möglich
+                   map.map.setView(map.homelocation_default, map.homelocation_default_zoom);
                });
             }
         }
@@ -161,7 +168,7 @@ var map = {
     initControls: function() {
         
         // home button
-        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="Center"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="eigener Standort"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             map.locateHome();
         });
@@ -219,6 +226,7 @@ var map = {
     },
     
     saveState: function() {
+
         session.set('state',{
            zoom: map.map.getZoom(),
            center: map.map.getCenter()
