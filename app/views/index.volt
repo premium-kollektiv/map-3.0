@@ -9,8 +9,7 @@
 
     <title>Premium-Landkarte</title>
 
-    <link href="/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/css/styles.css" rel="stylesheet" />
+   <link href="/css/styles.css" rel="stylesheet" />
    
   </head>
 
@@ -20,10 +19,10 @@
 
     <div id="topbar">
         <div id="search">
-            <input class="corner-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+            <input class="corner-all shadow" type="text" id="searchbar" placeholder="Stadt oder Adresse eingeben..." /><button id="searchbar-icon" type="button"><i class="icon-search" aria-hidden="true"></i></button>
         </div>
         <div id="tools" class="mobile-hidden">
-            <a href="#" class="bt bt-laeden corner-all shadow" data-type="laeden"><i class="icon icon-laden" aria-hidden="true"></i> Läden</a><a class="bt bt-haendler corner-all shadow" href="#" data-type="haendler"><i class="icon icon-haendler" aria-hidden="true"></i> Händler</a><a class="bt bt-sprecher corner-all shadow" href="#" data-type="sprecher"><i class="icon icon-sprecher" aria-hidden="true"></i> Sprecher</a>
+            <a href="#" title="Cafe/Club/Bar/Restaurant/Designladen/Hackerspace/Kulturzentrum/etc. meist mit direktem Konsum vor Ort. Bei Interesse bitte direkt beim Laden nachfragen, ob man Flaschen/Kisten zum mitnehmen kaufen kann (wie zb. bei einem Kiosk)." class="bt bt-laeden corner-all shadow" data-type="laeden"><img src="/img/marker/marker-icon-l.svg" />Laden</a><a title="meist Getränkemarkt und Großhandel, kaufen von Premium-Kisten/Paletten für Privatpersonen und für Läden möglich" class="bt bt-haendler corner-all shadow" href="#" data-type="haendler"><img src="/img/marker/marker-icon-h.svg" />(Groß)Handel</a><a title='dies sind die sogenannten Premium-"Sprecher*innen" vor Ort, welche sich um Handel und Läden kümmern, und für lokale Fragen jeder Art zur Verfügung stehen.' class="bt bt-sprecher corner-all shadow" href="#" data-type="sprecher"><img src="/img/marker/marker-icon-s.svg" />lokaler Kontakt</a>
         </div>
         
     </div>

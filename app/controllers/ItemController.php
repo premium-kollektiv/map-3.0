@@ -37,9 +37,44 @@ class ItemController extends ControllerBase
                 }
             }
 
+            $items = Item::listMarker();
+
+            $out = [];
+
+            foreach ($items as $r) {
+
+                if(!isset($out[(int)$r->id])) {
+                    $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
+                }
+                $out[(int)$r->id][2][] = (int)$r->offertype;
+            }
+
+
+            /*
+             * filter items by offertype but send all offertypes of each item
+             */
+            $out2 = [];
+            foreach ($out as $r) {
+
+                $check = false;
+
+                foreach ($r[2] as $offertype) {
+                    if(isset($options[$offertype])) {
+                        $check = true;
+                    }
+                }
+                if($check) {
+                    $out2[] = $r;
+                }
+
+            }
+
+            return $this->jsonResponse(array_values($out2));
+
         }
 
-        $items = Item::listMarker();
+        // if no types defined
+        return $this->jsonResponse([]);
 
         /*
          * simple output
@@ -56,37 +91,7 @@ class ItemController extends ControllerBase
         /*
          * reduce data outut
          */
-        $out = [];
 
-        foreach ($items as $r) {
-
-            if(!isset($out[(int)$r->id])) {
-                $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
-            }
-            $out[(int)$r->id][2][] = (int)$r->offertype;
-        }
-
-
-        /*
-         * filter items by offertype but send all offertypes of each item
-         */
-        $out2 = [];
-        foreach ($out as $r) {
-
-            $check = false;
-
-            foreach ($r[2] as $offertype) {
-                if(isset($options[$offertype])) {
-                    $check = true;
-                }
-            }
-            if($check) {
-                $out2[] = $r;
-            }
-
-        }
-
-        return $this->jsonResponse(array_values($out2));
     }
     
     /**

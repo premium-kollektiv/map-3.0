@@ -1,24 +1,103 @@
-require('geocomplete');
+require('./geocomplete.js');
 var map = require('./map.js');
+var base = require('./base64.js');
+
 
 var search = {
+
+    searchbar: null,
+
+    checkTimer: null,
+    checktimes:0,
+
+
     init: function() {
+
+        this.searchbar = $('#searchbar');
         
         // fix for lazy loading gapi
         window.gcallback = function() {
             search.gcallback();
         }
-        
-        
-        $.getScript('//maps.googleapis.com/maps/api/js?libraries=places&language=de&callback=gcallback',function(){
-            
-        });	
+
+        eval(base.decode('JC5nZXRTY3JpcHQoYmFzZS5kZWNvZGUoJ0x5OXRZWEJ6TG1kdmIyZHNaV0Z3YVhNdVkyOXRMMjFoY0hNdllYQnBMMnB6UDJ4cFluSmhjbWxsY3oxd2JHRmpaWE1tYkdGdVozVmhaMlU5WkdVbVkyRnNiR0poWTJzOVoyTmhiR3hpWVdOcicpLGZ1bmN0aW9uKCl7fSk7'));
     },
-    
+
+    /*
+        WORKAROUND:
+        check if there are no place results check own database
+     */
+    doCheck: function (dropdown) {
+        var paccontainer = $('.pac-container');
+
+        if (dropdown.style.display == '') {
+
+            //paccontainer.children('.areasearch-owndb').remove();
+
+            console.log('has results? true');
+            search.checkTimer = null;
+        }
+        else if (dropdown.style.display == 'none') {
+
+            /*
+            IF there are no results check the remium db
+             */
+
+
+            //paccontainer.css('display','block');
+            //paccontainer.append('<div class="areasearch-owndb pac-item areasearch" onclick="alert(\'make onclick\')"><span class="pac-icon pac-icon-areas"></span><span class="pac-item-query"><span class="pac-matched"></span>qwerty</span> <span>Area</span></div>');
+
+            console.log('has results? false');
+            search.checkTimer = null;
+        } else if (search.checktimes < 20) { // check at most 10 seconds
+            search.checktimes++;
+            search.checkTimer = setTimeout(function () {
+                search.doCheck(dropdown);
+            }, 100);
+        }
+    },
+    doCheckInit: function() {
+
+        this.searchbar.keyup(function () {
+
+            // the input node
+            var inp = search.searchbar[0],
+                value = inp.value; // value of input node
+            if (value && search.oldValue != value) { // has value and changed, start check
+                // drop-down list and message div
+                var dropdown = document.getElementsByClassName('pac-container')[0],
+                    msg = document.getElementById('msg');
+                // trick! change style to display='block'
+                dropdown.style.display = 'block';
+                // update stored value
+                search.oldValue = value;
+                // initiate checktimes
+                search.checktimes = 0;
+                // clear previous timer if exists
+                if (search.checkTimer)
+                    clearTimeout (search.checkTimer);
+                search.checkTimer = setTimeout(function () {
+                    search.doCheck(dropdown, msg);
+                }, 100);
+            }
+        });
+    },
+
+    /*
+    Callback when address api is loaded
+     */
     gcallback: function() {
+
+        this.doCheckInit();
         
-        $("#searchbar").geocomplete().bind("geocode:result", function(event, result){
-            
+        this.searchbar.geocomplete({
+            types:['establishment','geocode'],
+            placeChanged: function() {
+                console.log('TEst123');
+                search.oldValue = search.searchbar[0].value;
+            }
+        }).bind("geocode:result", function(event, result){
+
             search.setViewport(result);
         });
     },

@@ -52,44 +52,64 @@ var map = {
         this.map = L.map('map',{zoomControl:false});
 
         this.icon.default = new L.icon({
-            iconUrl: '/img/marker/marker-icon.png',
+            iconUrl: '/img/marker/marker-icon-l.svg',
             shadowUrl: '/img/marker/marker-shadow.png',
 
-            iconSize:     [25, 41], // size of the icon
+            iconSize:     [36, 42], // size of the icon
             shadowSize:   [41, 41], // size of the shadow
-            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
-            shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.laden = new L.icon({
-            iconUrl: '/img/marker/marker-icon-l.png',
+            iconUrl: '/img/marker/marker-icon-l.svg',
             shadowUrl: '/img/marker/marker-shadow.png',
 
-            iconSize:     [25, 41], // size of the icon
+            iconSize:     [36, 42], // size of the icon
             shadowSize:   [41, 41], // size of the shadow
-            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
-            shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.haendler = new L.icon({
-            iconUrl: '/img/marker/marker-icon-h.png',
+            iconUrl: '/img/marker/marker-icon-h.svg',
             shadowUrl: '/img/marker/marker-shadow.png',
 
-            iconSize:     [25, 41], // size of the icon
+            iconSize:     [36, 42], // size of the icon
             shadowSize:   [41, 41], // size of the shadow
-            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
-            shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
         });
         this.icon.sprecher = new L.icon({
-            iconUrl: '/img/marker/marker-icon-s.png',
+            iconUrl: '/img/marker/marker-icon-s.svg',
             shadowUrl: '/img/marker/marker-shadow.png',
 
-            iconSize:     [25, 41], // size of the icon
+            iconSize:     [36, 42], // size of the icon
             shadowSize:   [41, 41], // size of the shadow
-            iconAnchor:   [12, 40], // point of the icon which will correspond to marker's location
-            shadowAnchor: [12, 40],  // the same for the shadow
-            popupAnchor:  [1, -38] // point from which the popup should open relative to the iconAnchor
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
+        });
+        this.icon.sh = new L.icon({
+            iconUrl: '/img/marker/marker-icon-sh.svg',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [36, 42], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
+        });
+        this.icon.sl = new L.icon({
+            iconUrl: '/img/marker/marker-icon-sl.svg',
+            shadowUrl: '/img/marker/marker-shadow.png',
+
+            iconSize:     [36, 42], // size of the icon
+            shadowSize:   [41, 41], // size of the shadow
+            iconAnchor:   [18, 42], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 42],  // the same for the shadow
+            popupAnchor:  [0, -38] // point from which the popup should open relative to the iconAnchor
         });
         /*
          * tools setup
@@ -168,21 +188,21 @@ var map = {
     initControls: function() {
         
         // home button
-        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="eigener Standort"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-left').prepend('<div class="leaflet-control-home leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="eigener Standort"><i class="icon-home" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             map.locateHome();
         });
         
-        $('.leaflet-control-zoom-in').text('').html('<i class="fa fa-plus" aria-hidden="true"></i>');
-        $('.leaflet-control-zoom-out').text('').html('<i class="fa fa-minus" aria-hidden="true"></i>');
+        $('.leaflet-control-zoom-in').text('').html('<i class="icon-plus" aria-hidden="true"></i>');
+        $('.leaflet-control-zoom-out').text('').html('<i class="icon-minus" aria-hidden="true"></i>');
         
         // info button
-        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="zu meinem Standort"><i class="fa fa-info" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="zu meinem Standort"><i class="icon-info" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             popup.info();
         });
         
-        $('.leaflet-top.leaflet-right').prepend('<div class="leaflet-control-menu leaflet-bar leaflet-control"><a class="leaflet-control-menu corner-all" href="#" title="Öffne Menü"><i class="fa fa-bars" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-top.leaflet-right').prepend('<div class="leaflet-control-menu leaflet-bar leaflet-control"><a class="leaflet-control-menu corner-all" href="#" title="Öffne Menü"><i class="icon-bars" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             map.tools.toggleClass('mobile-hidden');
         });
@@ -324,6 +344,15 @@ var map = {
         else if(r == '3') {
             return map.icon.sprecher;
         }
+        else if(r == '1:3') {
+            return map.icon.sl;
+        }
+        else if(r == '2:3') {
+            return map.icon.sh;
+        }
+        else if(r == '1:2') {
+            return map.icon.haendler;
+        }
         else {
             return map.icon.default;
         }
@@ -353,15 +382,15 @@ var map = {
                '<p>';
                 
                     if(data.web) {
-                        out += '<i style="width:12px;" class="fa fa-home" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />';
+                        out += '<i style="width:12px;display:inline-block;" class="icon-globe" aria-hidden="true"></i> &nbsp;' + map.urlToLink(data.web) + '<br />';
                     }
                     
                     if(data.email) {
-                        out += '<i style="width:12px;" class="fa fa-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email) + '<br />';
+                        out += '<i style="width:12px;display:inline-block;" class="icon-envelope" aria-hidden="true"></i> &nbsp;' + map.emailToLink(data.email) + '<br />';
                     }
 
                     if(data.phone) {
-                        out += '<i style="width:12px;" class="fa fa-phone" aria-hidden="true"></i> &nbsp;' + map.phoneToLink(data.phone) + '<br />';
+                        out += '<i style="width:12px;display:inline-block;" class="icon-phone" aria-hidden="true"></i> &nbsp;' + map.phoneToLink(data.phone) + '<br />';
                     }
                     
                     out +=
