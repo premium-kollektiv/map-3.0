@@ -30,6 +30,11 @@ var xhr = {
             dataType:'json',
             data:settings.data,
             success:function(ret) {
+
+                if(settings.loader) {
+                    xhr.stopRequest();
+                }
+
                 if(ret.status == 1) {
                     if(settings.success != undefined) {
                         settings.success(ret.data);
@@ -46,11 +51,15 @@ var xhr = {
                         }
                     }
                 }
-            }, 
-            complete: function() {
+
+            },
+            error: function() {
                 if(settings.loader) {
                     xhr.stopRequest();
                 }
+            },
+            complete: function() {
+
             }
         });
     },

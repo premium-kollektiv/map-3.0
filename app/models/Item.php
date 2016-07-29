@@ -78,6 +78,11 @@ class Item extends \Phalcon\Mvc\Model
      */
     protected $phone;
 
+    /*
+     * @var string
+     */
+    protected $collmex_address_groups;
+
     /**
      *
      * @var integer
@@ -246,6 +251,13 @@ class Item extends \Phalcon\Mvc\Model
         return $this;
     }
 
+    public function setCollmexAddressGroups($collmex_address_groups)
+    {
+        $this->collmex_address_groups = $collmex_address_groups;
+
+        return $this;
+    }
+
     /**
      * Method to set the value of field location_checked
      *
@@ -392,6 +404,11 @@ class Item extends \Phalcon\Mvc\Model
         return $this->phone;
     }
 
+    public function getCollmexAddressGroups()
+    {
+        return $this->collmex_address_groups;
+    }
+
     /**
      * Returns the value of field location_checked
      *
@@ -476,7 +493,7 @@ class Item extends \Phalcon\Mvc\Model
         // Base model
         $item = new Item();
 
-        $sql = 'SELECT i.id,i.lat,i.lng, ho.offertype_id AS offertype FROM item i, item_has_offertype ho WHERE ho.item_id = i.id AND i.lat IS NOT NULL AND i.lng IS NOT NULL';
+        $sql = 'SELECT i.id,i.lat,i.lng, ho.offertype_id AS offertype, collmex_address_groups FROM item i, item_has_offertype ho WHERE ho.item_id = i.id AND i.lat IS NOT NULL AND i.lng IS NOT NULL';
 
         // Execute the query
         return new Resultset(null,$item,$item->getReadConnection()->query($sql));
@@ -547,6 +564,7 @@ class Item extends \Phalcon\Mvc\Model
             'web' => 'web', 
             'email' => 'email',
             'phone' => 'phone',
+            'collmex_address_groups' => 'collmex_address_groups',
             'location_checked' => 'location_checked', 
             'geolocate_count' => 'geolocate_count'
         );

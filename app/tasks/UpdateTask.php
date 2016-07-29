@@ -156,6 +156,8 @@ class UpdateTask extends BaseTask
                          * check if address is updatet set coordinates to null
                          * because while next geo update location will be recrawled
                          */
+
+
                         if (
                             $item->getStreet() != $data['street'] ||
                             $item->getZip() != preg_replace('/[^0-9]/', '', $data['zip']) ||
@@ -202,9 +204,11 @@ class UpdateTask extends BaseTask
                     $item->setName($data['name']);
                     $item->setWeb($data['web']);
                     $item->setPhone($data['phone']);
+                    $item->setCollmexAddressGroups($data['collmex_address_groups']);
 
                     $item->deleteOffertypes();
                     $item->deleteProducts();
+
 
                     /*
                      * Map Offertypes and Products from collmex to Db
@@ -385,6 +389,8 @@ class UpdateTask extends BaseTask
         if(!$data['address_group']) {
             return false;
         }
+
+        $data['collmex_address_groups'] = implode(',',$data['address_group']);
 
         /*
          * typecast Address Id

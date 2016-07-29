@@ -396,6 +396,35 @@ i.icon.icon-sprecher {
 	content: "\ea10";
 }
 
+@keyframes anim-rotate {
+	0% {
+		transform: rotate(0);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+.spinner {
+
+	display: inline-block;
+	animation: anim-rotate 2s infinite linear;
+
+}
+.spinner-popup {
+	display: block;
+	font-size:30px;
+	height: 30px;
+	width:30px;
+	line-height: 30px;
+	margin: .5em;
+	animation: anim-rotate 2s infinite linear;
+}
+.spinner--steps {
+	animation: anim-rotate 1s infinite steps(8);
+}
+.spinner--steps2 {
+	animation: anim-rotate 1s infinite steps(12);
+}
 
 
 

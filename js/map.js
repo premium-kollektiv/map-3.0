@@ -296,7 +296,7 @@ var map = {
 
 
             
-            marker.bindPopup('<div style="text-align:center;"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i></div>');
+            marker.bindPopup('<div style="text-align:center;"><i class="spinner-popup spinner--steps icon-spinner"></i></div>');
             /*
              * Lazy loading popup Data
              */

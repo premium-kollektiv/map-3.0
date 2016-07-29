@@ -10,13 +10,13 @@ var loader = {
     },
     
     start: function() {
-        this.icon.removeClass('fa-search');
-        this.icon.addClass('fa-refresh fa-spin fa-fw');
+        this.icon.removeClass('icon-search');
+        this.icon.addClass('spinner spinner--steps icon-spinner');
     },
     
     stop: function() {
-        this.icon.removeClass('fa-refresh fa-spin fa-fw');
-        this.icon.addClass('fa-search');
+        this.icon.removeClass('spinner spinner--steps icon-spinner');
+        this.icon.addClass('icon-search');
     }
 };
 

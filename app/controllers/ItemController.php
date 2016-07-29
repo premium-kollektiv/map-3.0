@@ -43,12 +43,22 @@ class ItemController extends ControllerBase
 
             foreach ($items as $r) {
 
+
+                $collmex_groups = explode(',',$r->getCollmexAddressGroups());
+
+                /*
+                 * hide all items with special group 93 :o)
+                 */
+
+                if(in_array('93',$collmex_groups)){
+                    continue;
+                }
+
                 if(!isset($out[(int)$r->id])) {
                     $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
                 }
                 $out[(int)$r->id][2][] = (int)$r->offertype;
             }
-
 
             /*
              * filter items by offertype but send all offertypes of each item
