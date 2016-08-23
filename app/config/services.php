@@ -1,5 +1,6 @@
 <?php
 
+use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Url as UrlResolver;
@@ -12,6 +13,14 @@ use Phalcon\Session\Adapter\Files as SessionAdapter;
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
  */
 $di = new FactoryDefault();
+
+/*
+ * access to config vars
+ */
+$di->set('config', function () {
+    $configData = require '../app/config/config.php';
+    return $configData;
+});
 
 /**
  * The URL component is used to generate all kind of urls in the application

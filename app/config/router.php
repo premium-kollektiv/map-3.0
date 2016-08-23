@@ -23,6 +23,22 @@
         'action' => 'apiGet',
         'id' => 1
     ]);
+
+    /*
+     * feedback form
+     */
+    $router->addPost('/feedback',[
+        'controller' => 'feedback',
+        'action' => 'zipmail'
+    ]);
+
+    /*
+     * feedback update update zip dependencies
+     */
+    $router->addPost('/feedback/update',[
+        'controller' => 'feedback',
+        'action' => 'update'
+    ]);
     
     /*
      * Not found 404 route

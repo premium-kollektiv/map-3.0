@@ -1,13 +1,63 @@
 require('magnific-popup');
 
 var popup = {
+
+    feedback: function(data) {
+        this.html(
+
+        '<h1>Feedback zu ' + data.name + '</h1>' +
+        '<div id="feedback-msg" class="info" style="display:none;"></div>' +
+
+        '<div style="display:none;text-align: center; font-size: 36px;margin:50px;" id="feedback-loader"><i class="spinner spinner--steps icon-spinner"></i></div>' +
+        '<div id="feedback">' +
+            '<p class="info">' +
+                'Ist Dir ein Fehler aufgefallen? Gib uns gerne bescheid..' +
+            '</p>' +
+
+            '<form id="feedbackform">' +
+                '<p>' +
+                    '<input class="corner-all" type="email" name="email" placeholder="Deine Mailadresse" />' +
+                '</p>' +
+                '<p>' +
+                    '<textarea class="corner-all" name="feedback" placeholder="Deine Nachricht" /> ' +
+                    '<input type="hidden" name="id" value="' + data.id + '"/> ' +
+                    '<input type="hidden" name="zip" value="' + data.zip + '"/> ' +
+                '</p>' +
+                '<p>' +
+                    '<button class="corner-all" type="submit">Absenden</button>' +
+                '</p>' +
+            '</form>' +
+        '</div>'
+
+        );
+
+        var $feedbackform = $('#feedbackform');
+
+        $feedbackform.submit(function(ev){
+            ev.preventDefault();
+            $feedbackloader = $('#feedback-loader');
+            $feedbackloader.show();
+            $('#feedback').hide();
+            xhr.post('/feedback',{
+                data: $feedbackform.serialize(),
+                success: function(ret){
+                    $('#feedback-msg').text(ret.msg).fadeIn(200);
+                    $feedbackloader.hide();
+                },
+                complete: function() {
+                    $feedbackloader.hide();
+                }
+            });
+        });
+    },
+
     init: function() {
         
     },
     
     info: function() {
         this.html(
-                '<h1>Impressum</h1>' +
+        '<h1>Impressum</h1>' +
 
         '<p>Uwe Lübbermann</p>' +
                 '<p>Brauerknechtgraben 45<br></p>' +

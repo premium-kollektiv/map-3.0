@@ -302,16 +302,21 @@ var map = {
              */
             marker.on('click', function(e) {
                 
-                var popup = e.target.getPopup();
+                var bubble = e.target.getPopup();
                 
                 xhr.get('/item/' + e.target.id,{
                     success: function(ret){
-                        popup.setContent(map.popupTpl(ret)+'');
-                        popup.update();
+                        bubble.setContent(map.popupTpl(ret)+'');
+                        bubble.update()
+                        $('a.feedback').click(function(ev){
+                            ev.preventDefault();
+                            $this = $(this);
+                            popup.feedback(ret);
+                        });
                     },
                     fail: function(ret) {
-                        popup.setContent(ret.msg);
-                        popup.update();
+                        bubble.setContent(ret.msg);
+                        bubble.update();
                     },
                     loader: false
                 });
@@ -361,7 +366,7 @@ var map = {
     popupTpl: function(data) {
         
         var out = '<h2> ' + data.name + ' </h2>';
-
+        document.zip = data.zip;
         console.log(data);
 
         // hide when only speaker
@@ -395,9 +400,18 @@ var map = {
                     
                     out +=
                '</p>';
+
+                out +=
+                    '<p>' +
+                        '<a class="feedback" href="#" data-zip="' + data.zip + '">Feedback zu diesem Eintrag?</a>' +
+                    '</p>';
        
                 return out;
         
+    },
+
+    feedback: function(zip) {
+        alert(zip);
     },
 
     phoneToLink: function(phone) {

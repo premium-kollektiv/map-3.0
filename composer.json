@@ -1,7 +1,8 @@
 {
     "name": "raphi/premium-map",
     "require": {
-        "mjaschen/collmex": "^0.6.2"
+        "mjaschen/collmex": "^0.6.2",
+        "swiftmailer/swiftmailer": "@stable"
     },
     "authors": [
         {

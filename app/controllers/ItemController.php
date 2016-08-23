@@ -111,7 +111,7 @@ class ItemController extends ControllerBase
      * @return json
      */
     public function apiGetAction() {
-
+        
         if($id = (int)$this->dispatcher->getParam('id')) {
             if($item = Item::findFirst($id)) {
 
