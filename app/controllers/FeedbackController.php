@@ -15,11 +15,7 @@ class FeedbackController extends ControllerBase
 
         try{
 
-            $out = [
-                'elena@premium-cola.de' => [
-                    'country' => ['DE']
-                ]
-            ];
+            $out = [];
 
             $table = file_get_html('http://www.premium-cola.de/kontakte');
 
@@ -38,7 +34,7 @@ class FeedbackController extends ControllerBase
                         $text = substr($text,4);
                         $text = trim($text);
 
-                        $mail = 'elena@premium-cola.de';
+                        $mail = 'raphael@geldfrei.net';
 
                         $item = str_get_html($text);
                         foreach ($item->find('a') as $maillink) {
