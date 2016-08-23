@@ -48,9 +48,10 @@ class ItemController extends ControllerBase
 
                 /*
                  * hide all items with special group 93 :o)
+                 * and hide all items with group 16
                  */
 
-                if(in_array('93',$collmex_groups)){
+                if(in_array('93',$collmex_groups) || in_array('16',$collmex_groups)){
                     continue;
                 }
 
