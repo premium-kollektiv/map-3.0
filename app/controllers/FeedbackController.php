@@ -62,12 +62,20 @@ class FeedbackController extends ControllerBase
                                 $p = trim($p);
                                 $p = str_replace([':'],'',$p);
 
+
+                                /*
+                                 * fix first zero zip
+                                 */
                                 if($p == '0') {
 
                                     $out[$mail][0] = 0;
                                     continue;
                                 }
 
+
+                                /*
+                                 * detect country
+                                 */
                                 if(strlen($p) > 1 && (int)$p == 0) {
                                     $p = trim($p);
 
@@ -75,6 +83,10 @@ class FeedbackController extends ControllerBase
                                     continue;
                                 }
 
+
+                                /*
+                                 * extract zip range
+                                 */
                                 if(strpos($p,'-') !== false) {
 
                                     $pp = explode('-',$p);
@@ -88,12 +100,18 @@ class FeedbackController extends ControllerBase
                                     continue;
                                 }
 
+                                /*
+                                 * simple lonely zip area
+                                 */
                                 if((int)$p > 0) {
                                     $out[$mail][(int)$p] = (int)$p;
                                 }
 
                             }
 
+                            /*
+                             * default country DE
+                             */
                             if(empty($out[$mail]['country'])) {
                                 $out[$mail]['country'] = ['DE'];
                             }
@@ -102,8 +120,14 @@ class FeedbackController extends ControllerBase
                 }
             }
 
+            /*
+             * save array to file
+             */
             file_put_contents('../app/config/feedback.txt',serialize($out));
 
+            /*
+             * simple output for control
+             */
             echo '<h1>Kontake update erfolgreich!</h1>';
 
             foreach ($out as $mail => $values) {
@@ -142,19 +166,30 @@ class FeedbackController extends ControllerBase
                 $zip = $item->zip;
 
 
+                /*
+                 * generate feedback mail content
+                 */
                 $feedback = strip_tags($_POST['feedback']);
 
                 $feedback .= "\n\n===========================================\n\nLandkarten Adresse um die es geht:\n";
 
                 $feedback .= $item->name . "\n" . $item->street . "\n" . $item->zip . ' ' . $item->city;
 
+                /*
+                 * gnereate feedback mail subject
+                 */
                 $subject = 'Premium Landkarte: ' . $item->name;
 
+                /*
+                 * set from mail if valid mail is posted
+                 */
                 if(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                     $from = $_POST['email'];
                 }
 
-
+                /*
+                 * get zip specific contact mails from file
+                 */
                 $contact = file_get_contents('../app/config/feedback.txt');
                 $contact = unserialize($contact);
 
@@ -187,6 +222,10 @@ class FeedbackController extends ControllerBase
 
                                 $this->mail($mail,$subject,$feedback,$from);
 
+                                // monitoing
+                                $feedback = 'mail to => ' . $mail . "\n\n" . $feedback;
+                                $this->mail('premium-karte@vahp.de',$subject,$feedback,$from);
+
                                 return $this->jsonResponse([
                                     'msg' => 'Nachricht wurde an ' . $mail . ' versendet.'
                                 ]);
@@ -199,6 +238,10 @@ class FeedbackController extends ControllerBase
 
                     // send mail to default
                     $this->mail($default_contact_for_country['mail'],$subject,$feedback,$from);
+
+                    // monitoing
+                    $feedback = 'NO ZIP MATCH => ' . $default_contact_for_country['mail'] . "\n\n" . $feedback;
+                    $this->mail('premium-karte@vahp.de',$subject,$feedback,$from);
 
                     return $this->jsonResponse([
                         'msg' => 'Nachricht wurde an ' . $default_contact_for_country['mail'] . ' versendet.'
