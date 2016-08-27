@@ -52,7 +52,35 @@ var popup = {
     },
 
     init: function() {
+
+        $('.bt-legend').click(function(){
+                popup.legend();
+        });
         
+    },
+
+    legend: function() {
+        popup.html(
+            '<h1>Legende</h1>' +
+
+            '<div class="info">'+
+                '<p>Einzelne Marker-Icon Typen können durch einen Klick auf das Icon in der Toolbar aus oder eingeblendet werden</p>' +
+                '<p>Standardmäßig werden alle Marker-Icons eingeblendet</p>' +
+            '</div>' +
+
+            '<h2><img src="' + config.baseUri + '/img/marker/marker-icon-l.svg" /> Laden</h2>' +
+            '<p>Cafe/Club/Bar/Restaurant/Designladen/Hackerspace/Kulturzentrum/etc. meist mit direktem Konsum vor Ort. Bei Interesse bitte direkt beim Laden nachfragen, ob man Flaschen/Kisten zum mitnehmen kaufen kann (wie zb. bei einem Kiosk).</p>' +
+
+            '<hr />' +
+
+            '<h2><img src="' + config.baseUri + '/img/marker/marker-icon-h.svg" /> (Groß)Handel</h2>' +
+            '<p>meist Getränkemarkt und Großhandel, kaufen von Premium-Kisten/Paletten für Privatpersonen und für Läden möglich</p>' +
+
+            '<hr />' +
+
+            '<h2><img src="' + config.baseUri + '/img/marker/marker-icon-s.svg" /> Lokaler Kontakt</h2>' +
+            '<p>die Premium-"Sprecherinnen" vor Ort, welche sich um Handel und Läden kümmern, und für lokale Fragen jeder Art zur Verfügung stehen.</p>'
+        );
     },
     
     info: function() {

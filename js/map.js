@@ -197,7 +197,7 @@ var map = {
         $('.leaflet-control-zoom-out').text('').html('<i class="icon-minus" aria-hidden="true"></i>');
         
         // info button
-        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-home corner-all" href="#" title="zu meinem Standort"><i class="icon-info" aria-hidden="true"></i></a></div>').click(function(ev){
+        $('.leaflet-bottom.leaflet-right').prepend('<div class="leaflet-control-info leaflet-bar leaflet-control"><a class="leaflet-control-zoom-info corner-all" href="#" title="zu meinem Standort"><i class="icon-info" aria-hidden="true"></i></a></div>').click(function(ev){
             ev.preventDefault();
             popup.info();
         });
