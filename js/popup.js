@@ -53,8 +53,9 @@ var popup = {
 
     init: function() {
 
-        $('.bt-legend').click(function(){
-                popup.legend();
+        $('.bt-legend').click(function(ev){
+            ev.preventDefault();
+            popup.legend();
         });
         
     },
