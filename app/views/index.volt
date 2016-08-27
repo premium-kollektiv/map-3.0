@@ -10,7 +10,7 @@
     <title>Premium-Landkarte</title>
 
    <link href="/css/styles.css" rel="stylesheet" />
-   
+   <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
   </head>
 
   <body>

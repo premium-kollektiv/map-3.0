@@ -114,10 +114,10 @@ textarea, input {
 }
 #searchbar {
 	width: 400px;
-	width: -moz-calc(100% - 441px);
-	width: -webkit-calc(100% - 441px);
-	width: -o-calc(100% - 441px);
-	width: calc(100% - 441px);
+	width: -moz-calc(100% - 477px);
+	width: -webkit-calc(100% - 477px);
+	width: -o-calc(100% - 477px);
+	width: calc(100% - 477px);
 	box-sizing: border-box;
 }
 #search {
@@ -171,6 +171,7 @@ textarea, input {
 	display: inline;
 	float: left;
 	height: 32px;
+	width:28px;
 	margin: 3px 8px 0 0;
 }
 
@@ -1193,6 +1194,7 @@ Vector Marker
 }
 .white-popup h2 img {
 	height:32px;
+	width:28px;
 	position: relative;
 	top: 6px;
 }
