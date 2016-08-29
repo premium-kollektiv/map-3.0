@@ -1,0 +1,3 @@
+[submodule "premium-phonegap-app"]
+	path = premium-phonegap-app
+	url = git@github.com:raph-ael/premium-phonegap-app.git
