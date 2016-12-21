@@ -20,7 +20,8 @@ class ItemController extends ControllerBase
      */
     public function apiListAction() {
 
-        $options = [1=>true,2=>true,3=>true];
+        // defualt list all if no type defined
+        $options = [1=>true,2=>true,3=>true,4=>true];
 
         if(isset($_GET['types'])) {
             $options = [];
@@ -28,7 +29,8 @@ class ItemController extends ControllerBase
             $types = [
                 'laeden' => 1,
                 'haendler' => 2,
-                'sprecher' => 3
+                'sprecher' => 3,
+                'webshop' => 4
             ];
 
             foreach ($_GET['types'] as $type) {
@@ -36,11 +38,10 @@ class ItemController extends ControllerBase
                     $options[(int)$types[$type]] = true;
                 }
             }
-
+            
             $items = Item::listMarker();
 
             $out = [];
-
             foreach ($items as $r) {
 
 
@@ -59,6 +60,8 @@ class ItemController extends ControllerBase
                     $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
                 }
                 $out[(int)$r->id][2][] = (int)$r->offertype;
+                $out[(int)$r->id][3] = $collmex_groups;
+
             }
 
             /*

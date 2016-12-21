@@ -114,22 +114,23 @@ textarea, input {
 }
 #searchbar {
 	width: 400px;
-	width: -moz-calc(100% - 477px);
-	width: -webkit-calc(100% - 477px);
-	width: -o-calc(100% - 477px);
-	width: calc(100% - 477px);
+	width: -moz-calc(100% - 639px);
+	width: -webkit-calc(100% - 639px);
+	width: -o-calc(100% - 639px);
+	width: calc(100% - 639px);
 	box-sizing: border-box;
 }
 #search {
 	width: 400px;
-	width: -moz-calc(100% - 477px);
-	width: -webkit-calc(100% - 477px);
-	width: -o-calc(100% - 477px);
-	width: calc(100% - 477px);
+	width: -moz-calc(100% - 639px);
+	width: -webkit-calc(100% - 639px);
+	width: -o-calc(100% - 639px);
+	width: calc(100% - 639px);
 	box-sizing: border-box;
 }
+
 #tools {
-	width: 477px;
+	width: 639px;
 }
 
 #searchbar {

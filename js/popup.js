@@ -80,7 +80,12 @@ var popup = {
             '<hr />' +
 
             '<h2><img src="' + config.baseUri + '/img/marker/marker-icon-s.svg" /> Lokaler Kontakt</h2>' +
-            '<p>die Premium-"Sprecherinnen" vor Ort, welche sich um Handel und Läden kümmern, und für lokale Fragen jeder Art zur Verfügung stehen.</p>'
+            '<p>die Premium-"Sprecherinnen" vor Ort, welche sich um Handel und Läden kümmern, und für lokale Fragen jeder Art zur Verfügung stehen.</p>' +
+
+            '<hr />' +
+
+            '<h2><img src="' + config.baseUri + '/img/marker/marker-icon-l.svg" /> Onlinehandel</h2>' +
+            '<p>Eine Bestellung von Premium-Getränken über den Versandweg ist der un-ökologischste Weg an Premium zu kommen. Trotzdem wollen wir dies als Option anbieten, denn in manchen Regionen ist das nicht zu umgehen ohne auf dem Trockenen zu sitzen. Bitte wähle den regional nächstgelegenen Onlinehandel. Der Gesamtpreis einer Bestellung (Produkt + Versand) ist üblicherweise bei jedem Anbieter gleich, denn diese orientieren sich an einer unverbindlichen und ökologischen Preisempfehlung.</p>'
         );
     },
     

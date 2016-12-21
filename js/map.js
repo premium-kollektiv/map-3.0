@@ -35,7 +35,7 @@ var map = {
         sprecher: null
     },
     
-    types: ['haendler','laeden','sprecher'],
+    types: ['haendler','laeden','sprecher','webshop'],
 
     homelocation_default: [50.93766174471314,9.777832031250002],
     homelocation_default_zoom: 7,
@@ -285,6 +285,8 @@ var map = {
                 fillOpacity: 0.2
             }
         });
+
+        console.log(markers);
         
         for (i = 0; i<markers.length;i++) {
 

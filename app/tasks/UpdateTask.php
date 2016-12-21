@@ -32,6 +32,8 @@ class UpdateTask extends BaseTask
 
     private $offertype_sprecher;
 
+    private $offertype_webshop;
+
     /*
      * static collmex products
      */
@@ -52,6 +54,8 @@ class UpdateTask extends BaseTask
 
     private $collmex_offertype_haendler;
 
+    private $collmex_offertype_webshop;
+
     /*
      * Collmex connected flag
      */
@@ -70,6 +74,7 @@ class UpdateTask extends BaseTask
         $this->offertype_laden = Offertype::findFirst(1);
         $this->offertype_haendler = Offertype::findFirst(2);
         $this->offertype_sprecher = Offertype::findFirst(3);
+        $this->offertype_webshop = Offertype::findFirst(4);
 
         /*
          * define group ids from collmex
@@ -82,6 +87,7 @@ class UpdateTask extends BaseTask
         $this->collmex_offertype_laden = 8;
         $this->collmex_offertype_haendler = 9;
         $this->collmex_offertype_sprecher = 7;
+        $this->collmex_offertype_webshop = 112;
     }
 
     private function collmexConnect() {
@@ -286,6 +292,12 @@ class UpdateTask extends BaseTask
             $out[] = $this->offertype_sprecher;
         }
 
+        if(isset($collmex_group_ids[$this->collmex_offertype_webshop])) {
+            $out[] = $this->offertype_webshop;
+            echo 'check! > ' . $this->offertype_webshop->id . ' < ';
+            echo "\n-----------------\n";
+        }
+
         return $out;
     }
     
@@ -337,6 +349,74 @@ class UpdateTask extends BaseTask
             echo $faled_items . ' not locateable' . PHP_EOL;
         }
         
+    }
+
+    /*
+     * update internal addresses
+     */
+    public function fix112Action() {
+
+        /*
+        $item = new Item();
+        $item->setId(4);
+        $item->setName('Onlinehandel');
+
+        $item->save();
+        die();
+        */
+        $items = Item::listMarker();
+
+        $out = [];
+        foreach ($items as $r) {
+
+            $collmex_groups = explode(',',$r->getCollmexAddressGroups());
+
+            $offertypes = $r->getOffertypes();
+
+
+
+            if(in_array('112',$collmex_groups)) {
+
+                foreach ($offertypes as $o) {
+                    print_r($o->id);
+
+                }
+                echo "\n=====\n";
+
+                //print_r($collmex_groups);
+                /*
+
+
+
+                $otypes = [];
+                foreach ($offertypes as $o) {
+                    $otypes[$o->id] = true;
+                }
+                $otypes[4] = true;
+                $out = [];
+                foreach ($otypes as $key => $v) {
+                    $out[] = (int)$key;
+                }
+
+                foreach ($out as $key => $o) {
+                    $out[$key] = Offertype::find($o);
+                }
+
+
+                $r->setOffertypes($out);
+                $r->save();
+                */
+
+
+            }
+
+
+
+
+
+        }
+
+        die();
     }
 
     /*
