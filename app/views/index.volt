@@ -23,6 +23,9 @@
     </div>
     <div id="map" class="map"></div>
 
+    <script type="text/javascript">
+        {{ script }}
+    </script>
     <script src="/js/build.js"></script>
   </body>
 </html>

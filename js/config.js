@@ -1,6 +1,6 @@
 
 var config = {
-    baseUri: ''
+    baseUri: window.location.origin + '/'
 };
 
 module.exports = config;

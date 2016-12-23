@@ -7,6 +7,12 @@
         'action' => 'index',
     ]);
 
+    $router->add('/:int', [
+        'controller' => 'index',
+        'action' => 'index',
+        'id'=> 1
+    ]);
+
     /*
      * API Call to get list of geolocations
      */

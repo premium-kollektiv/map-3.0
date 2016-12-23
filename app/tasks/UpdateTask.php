@@ -294,8 +294,6 @@ class UpdateTask extends BaseTask
 
         if(isset($collmex_group_ids[$this->collmex_offertype_webshop])) {
             $out[] = $this->offertype_webshop;
-            echo 'check! > ' . $this->offertype_webshop->id . ' < ';
-            echo "\n-----------------\n";
         }
 
         return $out;

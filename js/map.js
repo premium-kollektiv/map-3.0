@@ -138,13 +138,37 @@ var map = {
         this.initControls();
         
         /*
-         * check if therre is a state saved in session go to last state
+         * check is there are an hash tag to provide item information to zoom and center
+         * otherwise check if therre is a state saved in session go to last state
          * otherwise center to germany and try to locate by browser
          * 
          */
         var state = session.get('state');
-        
-        if(state != undefined) {
+
+
+
+
+        console.log(window.initData);
+
+        if(parseInt(window.initData.id) > 0) {
+
+            var popupLat = window.initData.lat;
+            var winLat = parseFloat(window.initData.lat)+0.0005;
+
+            console.log(window.initData.lat);
+            console.log(winLat);
+
+            this.map.setView(new L.LatLng(winLat,window.initData.lng), 16);
+
+            var popup = new L.Popup();
+
+            popup.setLatLng(new L.LatLng(winLat,window.initData.lng));
+            popup.setContent(this.popupTpl(window.initData));
+
+            this.map.addLayer(popup);
+
+        }
+        else if(state != undefined) {
             
             this.map.setView(state.center, state.zoom);
             
@@ -286,7 +310,7 @@ var map = {
             }
         });
 
-        console.log(markers);
+        //console.log(markers);
         
         for (i = 0; i<markers.length;i++) {
 
@@ -367,9 +391,9 @@ var map = {
     
     popupTpl: function(data) {
         
-        var out = '<h2> ' + data.name + ' </h2>';
+        var out = '<h2> ' + data.name + '</h2>';
         document.zip = data.zip;
-        console.log(data);
+        //console.log(data);
 
         // hide when only speaker
         if(data.products.length > 0 && false == (data.offertypes.length == 1 && data.offertypes[0] == 'Sprecher')) {
@@ -405,8 +429,11 @@ var map = {
 
                 out +=
                     '<p>' +
-                        '<a class="feedback" href="#" data-zip="' + data.zip + '">Feedback zu diesem Eintrag?</a>' +
+                        '<i style="width:12px;display:inline-block;" class="icon-bullhorn" aria-hidden="true"></i> &nbsp;<a class="feedback" href="#" data-zip="' + data.zip + '">Feedback zu diesem Eintrag?</a><br />' +
+                        '<i class="icon-link" aria-hidden="true"></i> &nbsp;<a onclick="this.style.display=\'none\';this.nextSibling.style.display=\'inline\';this.nextSibling.select();return false" id="link-item" href="' + config.BaseUri + '#' + data.id + '" title="Eintrag verlinken">Eintrag verlinken</a><input style="display:none;" type="text" id="link-item-url" value="' + config.baseUri + data.uri + '" />'
                     '</p>';
+
+                $()
        
                 return out;
         
@@ -422,7 +449,7 @@ var map = {
     
     urlToLink: function(url) {
 
-        console.log(url);
+        //console.log(url);
         
         var prefix = 'http://';
 
@@ -441,7 +468,7 @@ var map = {
             viewurl = viewurl.substr(4);
         }
 
-        console.log(viewurl);
+        //console.log(viewurl);
         
         return '<a target="_blank" href="' + url + '">' + map.shorten(viewurl) + '</a>'
     },

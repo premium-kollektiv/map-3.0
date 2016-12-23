@@ -38,7 +38,7 @@ class ItemController extends ControllerBase
                     $options[(int)$types[$type]] = true;
                 }
             }
-            
+
             $items = Item::listMarker();
 
             $out = [];
@@ -150,7 +150,8 @@ class ItemController extends ControllerBase
                     'zip' => $item->zip.'',
                     'web' => $item->web.'',
                     'email' => $item->email.'',
-                    'phone' => $item->phone
+                    'phone' => $item->phone,
+                    'uri' => $item->id
                 ]);
             }
         }

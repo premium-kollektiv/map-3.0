@@ -117,7 +117,7 @@ var popup = {
           src: '<div class="white-popup border-all">' + html + '</div>', // can be a HTML string, jQuery object, or CSS selector
           type: 'inline'
         },
-        closeMarkup: '<button onclick="closePopup();" title="%title%" type="button" class="mfp-close"><i class="icon-cross" aria-hidden="true"></i></button>'
+        closeMarkup: '<button onclick="closePopup();" title="%title%" type="button" class="mfp-close"><i class="icon-close" aria-hidden="true"></i></button>'
       });
     }
 };
