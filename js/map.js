@@ -432,8 +432,6 @@ var map = {
                         '<i style="width:12px;display:inline-block;" class="icon-bullhorn" aria-hidden="true"></i> &nbsp;<a class="feedback" href="#" data-zip="' + data.zip + '">Feedback zu diesem Eintrag?</a><br />' +
                         '<i class="icon-link" aria-hidden="true"></i> &nbsp;<a onclick="this.style.display=\'none\';this.nextSibling.style.display=\'inline\';this.nextSibling.select();return false" id="link-item" href="' + config.BaseUri + '#' + data.id + '" title="Eintrag verlinken">Eintrag verlinken</a><input style="display:none;" type="text" id="link-item-url" value="' + config.baseUri + data.uri + '" />'
                     '</p>';
-
-                $()
        
                 return out;
         
