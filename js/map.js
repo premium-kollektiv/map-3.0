@@ -145,18 +145,10 @@ var map = {
          */
         var state = session.get('state');
 
-
-
-
-        console.log(window.initData);
-
-        if(parseInt(window.initData.id) > 0) {
+        if(window.initData != undefined) {
 
             var popupLat = window.initData.lat;
             var winLat = parseFloat(window.initData.lat)+0.0005;
-
-            console.log(window.initData.lat);
-            console.log(winLat);
 
             this.map.setView(new L.LatLng(winLat,window.initData.lng), 16);
 
