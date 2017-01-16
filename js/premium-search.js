@@ -82,7 +82,7 @@ var helper = {
             cache:false,
             name: 'addresses',
             remote: {
-                url: 'http://photon.komoot.de/api/?',
+                url: config.protocol + '//photon.komoot.de/api/?',
                 transform: function(response) {
                     // Map the remote source JSON array to a JavaScript object array
 

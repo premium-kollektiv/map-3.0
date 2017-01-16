@@ -1,6 +1,9 @@
 
 var config = {
-    baseUri: window.location.origin + '/'
+    baseUri: window.location.origin + '/',
+    protocol: window.location.protocol
 };
+
+
 
 module.exports = config;
