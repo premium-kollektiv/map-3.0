@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    
-    <title>Premium-Landkarte</title>
+     <title>Premium-Landkarte</title>
     <link href="/css/styles.css" rel="stylesheet" />
   </head>
   <body>
@@ -22,6 +21,8 @@
         </div>
     </div>
     <div id="map" class="map"></div>
+
+
 
     <script type="text/javascript">
         {{ script }}

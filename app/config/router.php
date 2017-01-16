@@ -13,6 +13,12 @@
         'id'=> 1
     ]);
 
+    $router->add('/search/:params',[
+        'controller' => 'item',
+        'action' => 'apiSearch',
+        'string' => 1
+    ]);
+
     /*
      * API Call to get list of geolocations
      */

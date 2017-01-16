@@ -178,6 +178,11 @@ var map = {
            
         }
     },
+
+    getLatLng: function() {
+        var latLng = this.map.getCenter();
+        return [latLng.lat,latLng.lng];
+    },
     
     locateHome: function() {
         
@@ -270,8 +275,8 @@ var map = {
     },
     
     loadMarker: function(types) {
-       
-         if(types == undefined) {
+
+        if(types == undefined) {
             var types = map.types;
         }
         

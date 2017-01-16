@@ -1,26 +1,60 @@
-require('./geocomplete.js');
+//require('./geocomplete.js');
 var map = require('./map.js');
 var base = require('./base64.js');
+
+var PremiumAddressEngine = require('./premium-search.js');
 
 
 var search = {
 
     searchbar: null,
-
+    searchbarIcon:null,
     checkTimer: null,
     checktimes:0,
 
 
     init: function() {
 
+
         this.searchbar = $('#searchbar');
+        this.searchbarIcon = $('#searchbar-icon');
+
+        this.searchbar.premiumSearch({
+            lang: 'de',
+            latLng: map.getLatLng(),
+            map: map
+        });
+
+
+        this.searchbar.css({
+            'vertical-align': 'inherit',
+            'background-color': '#fff'
+        });
+        this.searchbarIcon.css({
+            position:'absolute'
+        });
+
+
+
         
         // fix for lazy loading gapi
+        /*
         window.gcallback = function() {
             search.gcallback();
         }
 
         eval(base.decode('JC5nZXRTY3JpcHQoYmFzZS5kZWNvZGUoJ0x5OXRZWEJ6TG1kdmIyZHNaV0Z3YVhNdVkyOXRMMjFoY0hNdllYQnBMMnB6UDJ4cFluSmhjbWxsY3oxd2JHRmpaWE1tYkdGdVozVmhaMlU5WkdVbVkyRnNiR0poWTJzOVoyTmhiR3hpWVdOcicpLGZ1bmN0aW9uKCl7fSk7'));
+        */
+        /*
+        $('#searchbar').keyup(function(){
+
+            search.searchbar.val($(this).val());
+            e = jQuery.Event("keyup");
+            e.which = 13 //enter key
+            search.searchbar.trigger(e);
+        });
+        */
+
     },
 
     /*
@@ -44,8 +78,8 @@ var search = {
              */
 
 
-            //paccontainer.css('display','block');
-            //paccontainer.append('<div class="areasearch-owndb pac-item areasearch" onclick="alert(\'make onclick\')"><span class="pac-icon pac-icon-areas"></span><span class="pac-item-query"><span class="pac-matched"></span>qwerty</span> <span>Area</span></div>');
+            paccontainer.css('display','block');
+            paccontainer.append('<div class="areasearch-owndb pac-item areasearch" onclick="alert(\'make onclick\')"><span class="pac-icon pac-icon-areas"></span><span class="pac-item-query"><span class="pac-matched"></span>qwerty</span> <span>Area</span></div>');
 
             console.log('has results? false');
             search.checkTimer = null;

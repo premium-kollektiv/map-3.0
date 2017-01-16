@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jquery-addresspicker demo (a jQuery UI widget)</title>
+  <link rel="stylesheet" href="themes/base/jquery.ui.all.css">
+
+  <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="../src/jquery.ui.addresspicker.js"></script>
+  <script>
+  $(function() {
+    var addresspicker = $( "#addresspicker" ).addresspicker({
+      componentsFilter: 'country:FR',
+      delay:0
+    });
+
+
+  });
+  </script>
+</head>
+<body>
+
+  <input id="addresspicker" />
+
+
+</body>
+</html>

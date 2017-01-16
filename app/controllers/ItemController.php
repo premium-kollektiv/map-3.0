@@ -14,6 +14,70 @@ class ItemController extends ControllerBase
         $this->persistent->parameters = null;
     }
 
+    public function apiSearchAction() {
+
+        if($string = $this->dispatcher->getParam('string')) {
+            $string = strip_tags($string);
+            $string = preg_replace('/[^0-9a-zA-Z ßäöüÄÖÜé\-_]/','',$string);
+
+
+            $strings = explode(' ',$string);
+
+            foreach ($strings as $key => $v) {
+                $strings[$key] = "'%" . $v . "%'";
+            }
+
+
+            if($items = Item::find([
+                'conditions' => 'name LIKE ' . implode(' OR ',$strings),
+                'limit' => 3
+            ])){
+
+                $out = [];
+
+                foreach ($items as $item) {
+
+                    $street = $item->street;
+
+                    $offertypes = [];
+                    foreach ($item->offertypes as $ot) {
+                        $offertypes[] = $ot->id;
+                    }
+
+                    /*
+                     * if only speaker dont send the streenname
+                     */
+                    if(count($item->offertypes) == 1 && $item->offertypes[0]->id == 3) {
+                        $street = '';
+                    }
+
+                    $out[] = [
+                        'id' => (int)$item->id,
+                        'name' => $item->name.'',
+                        'street' => $street.'',
+                        'city' => $item->city.'',
+                        'zip' => $item->zip.'',
+                        'web' => $item->web.'',
+                        'email' => $item->email.'',
+                        'phone' => $item->phone,
+                        'uri' => $item->id,
+                        'lat' => $item->lat,
+                        'lng' => $item->lng,
+                        'offertypes' => $offertypes
+                    ];
+                }
+
+                return $this->jsonResponse([
+                    'items' => $out
+                ]);
+
+
+            }
+        }
+
+        return $this->jsonResponse([]);
+    }
+
     /**
      * get list of marker with geo location
      * @return json
