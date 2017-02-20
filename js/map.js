@@ -119,6 +119,12 @@ var map = {
         /*
          * add tile layers
          */
+
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(this.map);
+
         L.tileLayer(MB_URL, {attribution: '', id: 'mapbox.streets'}).addTo(this.map);
         new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 
