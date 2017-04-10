@@ -454,7 +454,7 @@ var map = {
         
         var prefix = 'http://';
 
-        if (url.substr(0, prefix.length) != prefix)
+        if (!(url.substr(0, 7) == 'http://' || url.substr(0, 8) == 'https://'))
         {
             url = prefix + url;
         }
@@ -465,11 +465,16 @@ var map = {
             viewurl = viewurl.substr(0,(viewurl.length-1));
         }
 
+        if(viewurl.substr(0,1) == '/') {
+            viewurl = viewurl.substr(1);
+        }
+
         if(viewurl.substr(0,4) == 'www.') {
             viewurl = viewurl.substr(4);
         }
 
-        //console.log(viewurl);
+        console.log(viewurl);
+        console.log(url);
         
         return '<a target="_blank" href="' + url + '">' + map.shorten(viewurl) + '</a>'
     },
