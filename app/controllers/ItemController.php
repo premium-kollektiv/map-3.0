@@ -108,7 +108,7 @@ class ItemController extends ControllerBase
             $out = [];
             foreach ($items as $r) {
 
-                if(empty($r->name) && empty($r->street) && empty($r->zip)) {
+                if(empty($r->name)) {
                     continue;
                 }
 
