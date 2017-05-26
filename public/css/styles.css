@@ -180,18 +180,18 @@ textarea, input {
 
 
 /* Premium Search Results */
-.tt-dataset .tt-suggestion img{
+.tt-dropdown-menu img{
 	float: left;
 	height: 45px;
 	margin-right: 8px;
 	width: 42px;
 }
 
-.tt-dataset .tt-suggestion .cnt{
+.tt-dropdown-menu .tt-suggestion .cnt{
 	display:block;
 }
 
-.tt-dataset .tt-suggestion h5{
+.tt-dropdown-menu .tt-suggestion h5{
 	display:block;
 	padding:0;
 	margin:0;

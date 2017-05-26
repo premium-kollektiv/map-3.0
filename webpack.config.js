@@ -10,7 +10,9 @@ var globalplugins = {
     xhr:"./xhr.js",
     popup:"./popup.js",
     search:"./search.js",
-    session:"./session.js"
+    session:"./session.js",
+    //Bloodhound: 'bloodhound-js',
+    //AddressPicker : './google-addresspicker.js'
 };
 
 module.exports = {

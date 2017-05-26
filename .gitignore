@@ -1,6 +1,5 @@
 app/config/config.php
 node_modules
 app/cache/**
-public/js/**
 /vendor/
 /app/config/feedback.txt

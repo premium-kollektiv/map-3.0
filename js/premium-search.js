@@ -1,6 +1,7 @@
 require('typeahead.js');
 var Bloodhound = require('bloodhound-js');
 
+
 var helper = {
 
     /*
@@ -174,6 +175,16 @@ var helper = {
         addresses.initialize();
         premiumPlaces.initialize();
 
+        var addressPicker = new AddressPicker();
+
+        addressPicker.initialize();
+
+        this.typeahead(null, {
+            displayKey: 'description',
+            source: addressPicker.ttAdapter()
+        });
+
+        /*
         this.typeahead({},
         {
             name: 'premium',
