@@ -27,11 +27,21 @@ class ItemController extends ControllerBase
                 $strings[$key] = "'%" . $v . "%'";
             }
 
-
+            /*
             if($items = Item::find([
-                'conditions' => 'name LIKE ' . implode(' OR ',$strings),
+                'conditions' => 'name LIKE '.implode(' OR name LIKE ',$strings),
                 'limit' => 3
-            ])){
+            ]))
+            */
+            if($items = Item::rawSql('
+                SELECT * FROM item 
+                  WHERE name LIKE '.implode(' OR name LIKE ',$strings) .' 
+                  OR city LIKE '.implode(' OR city LIKE ',$strings) .' 
+                
+                LIMIT 0,3
+            '))
+            {
+
 
                 $out = [];
 
@@ -107,10 +117,6 @@ class ItemController extends ControllerBase
 
             $out = [];
             foreach ($items as $r) {
-
-                if(empty($r->name)) {
-                    continue;
-                }
 
 
                 $collmex_groups = explode(',',$r->getCollmexAddressGroups());

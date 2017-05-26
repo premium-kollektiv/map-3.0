@@ -1433,6 +1433,10 @@ var helper = {
             name: 'premium',
             remote: {
                 url: config.baseUri + 'search/',
+                replace: function(url, uriEncodedQuery) {
+
+                    return '/search/' + uriEncodedQuery;
+                },
 
                 filter: function(response) {
                     // Map the remote source JSON array to a JavaScript object array
@@ -1470,6 +1474,8 @@ var helper = {
 
                     loader.start();
 
+                    alert(query);
+
                     settings.url += query;
 
                     return settings;
@@ -1483,7 +1489,7 @@ var helper = {
         $(premiumPlaces).on('addresspicker:selected', function (event, result) {
 
             //console.log(result.lat());
-            map.map.setView(new L.latLng(result.lat(), result.lng()),13);
+            map.map.setView(new L.latLng(result.lat(), result.lng()),12);
 
         });
 
@@ -1535,7 +1541,7 @@ var helper = {
         $(addressPicker).on('addresspicker:selected', function (event, result) {
 
             //console.log(result.lat());
-            map.map.setView(new L.latLng(result.lat(), result.lng()),13);
+            map.map.setView(new L.latLng(result.lat(), result.lng()),20);
 
         });
 
