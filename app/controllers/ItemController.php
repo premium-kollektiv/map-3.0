@@ -108,6 +108,10 @@ class ItemController extends ControllerBase
             $out = [];
             foreach ($items as $r) {
 
+                if(empty($r->name) && empty($r->street) && empty($r->zip)) {
+                    continue;
+                }
+
 
                 $collmex_groups = explode(',',$r->getCollmexAddressGroups());
 
