@@ -22,7 +22,7 @@
     </div>
     <div id="map" class="map"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&language=de&key=AIzaSyC_Kz1w7iY6jsU04Rb2uPN46la6QEwGRVA"></script>
     <script type="text/javascript">
         {{ script }}
     </script>
