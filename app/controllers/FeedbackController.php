@@ -193,10 +193,16 @@ class FeedbackController extends ControllerBase
                 $contact = file_get_contents('../app/config/feedback.txt');
                 $contact = unserialize($contact);
 
+                $contact = [
+
+                ];
+
                 // set one default contact for each country
                 // its the first simply
 
-                $default_contact_for_country = false;
+                $default_contact_for_country = [
+                    'mail' => 'elena@premium-cola.de'
+                ];
                 $zip_match = false;
 
                 foreach ($contact as $mail => $c) {

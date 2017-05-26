@@ -35,7 +35,7 @@ class ControllerBase extends Controller
         }
 
         if($from === false) {
-            $from = $this->mail_from;
+            $from = $this->mail_from[0];
         }
 
         $this->loadMailer();
