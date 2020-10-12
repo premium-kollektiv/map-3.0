@@ -1,5 +1,8 @@
 app/config/config.php
-node_modules
 app/cache/**
+app/config/feedback.txt
 /vendor/
-/app/config/feedback.txt
+.vagrant
+*.log
+.DS_Store
+public/info.php

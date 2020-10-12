@@ -9,9 +9,9 @@ class BaseTask extends \Phalcon\Cli\Task
         $country = trim($country);
         
         $countrys = [
-            'DE' => 'Deutschland',
-            'AT' => 'Österreich',
-            'CH' => 'Schweiz'
+            'DE' => 'Germany',
+            'AT' => 'Austria',
+            'CH' => 'Switzerland'
         ];
         
         if(isset($countrys[$country])) {
@@ -31,22 +31,22 @@ class BaseTask extends \Phalcon\Cli\Task
  
         $address = urlencode($address); // replace all the white space with "+" sign to match with google search pattern
 
-        $url = "http://maps.google.com/maps/api/geocode/json?sensor=false&language=de&address=$address";
-
+        $url = "http://nominatim.openstreetmap.org/search?format=json&limit=1&q=$address";
+        ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)'); 
         $response = file_get_contents($url);
 
         $json = json_decode($response,TRUE); //generate array object from the response from the web
 
         if(
-            isset($json['results'][0]['geometry']['location']['lat']) &&
-            isset($json['results'][0]['geometry']['location']['lng'])
+            isset($json[0]['lat']) &&
+            isset($json[0]['lon'])
         ) {
             return [
-                'lat' => $json['results'][0]['geometry']['location']['lat'],
-                'lng' => $json['results'][0]['geometry']['location']['lng']
+                'lat' => $json[0]['lat'],
+                'lng' => $json[0]['lon']
             ];
         }
-    }
+    }    
 
     public function error($msg, $exit = true) {
         echo PHP_EOL . 'Fehler: ' . $msg . PHP_EOL;

@@ -2,17 +2,6 @@
 
     $router = new \Phalcon\Mvc\Router();
 
-    $router->add('/', [      
-        'controller' => 'index',
-        'action' => 'index',
-    ]);
-
-    $router->add('/:int', [
-        'controller' => 'index',
-        'action' => 'index',
-        'id'=> 1
-    ]);
-
     $router->add('/search/:params',[
         'controller' => 'item',
         'action' => 'apiSearch',
@@ -25,6 +14,14 @@
     $router->addGet('/item/list', [       
         'controller' => 'item',
         'action' => 'apiList',
+    ]);
+
+    /*
+     * API Call to get all items
+     */
+    $router->addGet('/item/all', [       
+        'controller' => 'item',
+        'action' => 'getAll',
     ]);
     
     /*
@@ -44,14 +41,6 @@
         'action' => 'zipmail'
     ]);
 
-    /*
-     * feedback update update zip dependencies
-     */
-    $router->addPost('/feedback/update',[
-        'controller' => 'feedback',
-        'action' => 'update'
-    ]);
-    
     /*
      * Not found 404 route
      */

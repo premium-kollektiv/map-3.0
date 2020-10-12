@@ -1,13 +1,18 @@
 {
-    "name": "raphi/premium-map",
-    "require": {
-        "mjaschen/collmex": "^0.6.2",
-        "swiftmailer/swiftmailer": "@stable"
+  "name": "raphi/premium-map",
+  "description": "Backend service for the Premium Landkarte",
+  "require": {
+    "mjaschen/collmex": "^0.6.2",
+    "swiftmailer/swiftmailer": "@stable"
+  },
+  "authors": [
+    {
+      "name": "Raphael Wintrich",
+      "email": "raphael@geldfrei.net"
     },
-    "authors": [
-        {
-            "name": "Raphael Wintrich",
-            "email": "raphael@geldfrei.net"
-        }
-    ]
+    {
+      "name": "Timo Schrappe",
+      "email": "hello@timo.ruhr"
+    }
+  ]
 }

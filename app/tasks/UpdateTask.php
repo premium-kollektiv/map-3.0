@@ -79,10 +79,10 @@ class UpdateTask extends BaseTask
         /*
          * define group ids from collmex
          */
-        $this->collmex_product_cola = 20;
-        $this->collmex_product_bier = 21;
-        $this->collmex_product_frohlunder = 29;
-        $this->collmex_product_muntermate = 33;
+        $this->collmex_product_cola = $this->product_cola->getCollmexId();
+        $this->collmex_product_bier = $this->product_bier->getCollmexId();
+        $this->collmex_product_frohlunder = $this->product_frohlunder->getCollmexId();
+        $this->collmex_product_muntermate = $this->product_muntermate->getCollmexId();
 
         $this->collmex_offertype_laden = 8;
         $this->collmex_offertype_haendler = 9;
@@ -150,13 +150,25 @@ class UpdateTask extends BaseTask
             foreach ($records as $record) {
 
                 if ($data = $this->addressCleanup($record)) {
-
-                    $item = null;
+                    $collmex_groups = explode(',',$data['collmex_address_groups']);
 
                     /*
-                     * check if item exists by customer_id
-                     * otherwise create new item
-                     */
+                    * Skip if customer don't explicitly want to be listed
+                    * 
+                    * 16: ehemalige Kunden
+                    * 93: möchte auf eigenen Wunsch nicht auf die Landkarte
+                    * 124: möchten auf die Landkarte
+                    */
+                    if(!in_array('124',$collmex_groups)){
+                        continue;
+                    }
+                    
+                    $item = null;
+                    
+                    /*
+                    * check if item exists by customer_id
+                    * otherwise create new item
+                    */
                     if ($item = Item::findFirst('collmex_address_id = ' . (int)$data['address_id'])) {
                         /*
                          * check if address is updatet set coordinates to null
@@ -215,7 +227,6 @@ class UpdateTask extends BaseTask
                     $item->deleteOffertypes();
                     $item->deleteProducts();
 
-
                     /*
                      * Map Offertypes and Products from collmex to Db
                      */
@@ -223,14 +234,14 @@ class UpdateTask extends BaseTask
                         $item->setOffertypes($offertypes);
                     }
                     /*
-                     * if item has no offertypes delete it
-                     */
+                    * if item has no offertypes delete it
+                    */
                     else {
                         $unused_records++;
                         $item->delete();
                         continue;
                     }
-
+                    
                     if($products = $this->mapProducts($data['address_group'])) {
                         $item->setProducts($products);
                     }
@@ -244,13 +255,58 @@ class UpdateTask extends BaseTask
                 }
             }
 
+            $deletecItems = $this->deleteOldEntries();
+
             echo PHP_EOL;
 
             echo $new_records . ' new Map Items' . PHP_EOL;
             echo $updated_records . ' Items Updated' . PHP_EOL;
             echo $address_changes . ' Address changes' . PHP_EOL;
             echo $unused_records . ' unused Records' . PHP_EOL;
+            echo $deletecItems . ' deleted Records' . PHP_EOL;
         }
+    }
+
+    public function deleteOldEntries() {
+        $databaseItems = Item::find();
+        $collmexItems = $this->collmexAddressGet();
+
+        $unknownItemsCount = 0;
+        $knownItemsCount = 0;
+
+        foreach($databaseItems as $databaseItem) {
+            $databaseId = $databaseItem->getCollmexAddressId();
+            $isKnownItem = false;
+            foreach($collmexItems as $collmexItem) {
+                $collmexId = $collmexItem['address_id'];
+                if($databaseId == $collmexId) {
+                    $data = $this->addressCleanup($collmexItem);
+                    $collmex_groups = explode(',',$data['collmex_address_groups']);
+                    /*
+                     * 124: möchten auf die Landkarte
+                     */
+                    if(!in_array('124',$collmex_groups)){
+                        $unknownItemsCount++;
+                        $databaseItem->deleteOffertypes();
+                        $databaseItem->deleteProducts();
+                        $databaseItem->delete();
+                    } else {
+                        $isKnownItem = true;
+                    }
+                }
+            }
+
+            if($isKnownItem) {
+                $knownItemsCount++;
+            } else {
+                $unknownItemsCount++;
+                $databaseItem->deleteOffertypes();
+                $databaseItem->deleteProducts();
+                $databaseItem->delete();
+            }
+        }
+
+        return $unknownItemsCount;
     }
 
     public function mapProducts($collmex_group_ids) {
@@ -295,7 +351,6 @@ class UpdateTask extends BaseTask
         if(isset($collmex_group_ids[$this->collmex_offertype_webshop])) {
             $out[] = $this->offertype_webshop;
         }
-
         return $out;
     }
     
@@ -314,7 +369,8 @@ class UpdateTask extends BaseTask
                     
                     $item->geolocate_count = (int)$item->geolocate_count+1;
 
-                    $address_string = $item->street . ', ' . $item->zip . ', ' . $item->city . $this->countryMapper($item->country);
+                    // $address_string = $item->street . ', ' . $item->zip . ', ' . $item->city . $this->countryMapper($item->country);
+                    $address_string = $item->street . ', ' . $item->city . ', ' . $this->countryMapper($item->country);
 
                     /*
                      * change address string to city when offertype is only speaker
@@ -322,7 +378,8 @@ class UpdateTask extends BaseTask
 
                     if(count($item->offertypes) == 1 && $item->offertypes[0]->id == $this->offertype_sprecher->id) {
 
-                        $address_string = $item->zip . ', ' . $item->city .  $this->countryMapper($item->country);
+                        // $address_string = $item->zip . ', ' . $item->city .  $this->countryMapper($item->country);
+                        $address_string = $item->city . ', ' . $this->countryMapper($item->country);
 
                     }
 
@@ -334,6 +391,7 @@ class UpdateTask extends BaseTask
                         $new_updated_items++;
                     }
                     else {
+                        echo $item->name . ': ' . $item->city . '; ';
                         $faled_items++;
                     }
                     

@@ -22,6 +22,12 @@ class Product extends \Phalcon\Mvc\Model
     protected $description;
 
     /**
+     * 
+     * @var integer
+     */
+    protected $collmex_id;
+
+    /**
      * Method to set the value of field id
      *
      * @param integer $id
@@ -61,6 +67,19 @@ class Product extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field collmex_id
+     *
+     * @param integer $collmex_id
+     * @return $this
+     */
+    public function setCollmexId($collmex_id)
+    {
+        $this->collmex_id = $collmex_id;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field id
      *
      * @return integer
@@ -89,6 +108,17 @@ class Product extends \Phalcon\Mvc\Model
     {
         return $this->description;
     }
+
+    /**
+     * Returns the value of field collmex_id
+     *
+     * @return integer
+     */
+    public function getCollmexId()
+    {
+        return $this->collmex_id;
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Item_has_product', 'product_id', array('alias' => 'Item_has_product'));

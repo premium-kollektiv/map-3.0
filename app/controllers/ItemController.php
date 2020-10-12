@@ -9,58 +9,87 @@ class ItemController extends ControllerBase
     /**
      * Index action
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $this->persistent->parameters = null;
     }
 
-    public function apiSearchAction() {
+    public function getAllAction() {
+        $items = Item::find();
+        $cleaned = [];
+        foreach($items as $item) {
+            $cleaned_item = array();
 
-        if($string = $this->dispatcher->getParam('string')) {
-            $string = strip_tags($string);
-            $string = preg_replace('/[^0-9a-zA-Z ßäöüÄÖÜé\-_]/','',$string);
-
-
-            $strings = explode(' ',$string);
-
-            foreach ($strings as $key => $v) {
-                $strings[$key] = "'%" . $v . "%'";
+            $products = array();
+            foreach ($item->products as $p){
+                $products[] = $p->name;
+            }
+            if(count($products) == 0) {
+                continue;
             }
 
-            /*
-            if($items = Item::find([
-                'conditions' => 'name LIKE '.implode(' OR name LIKE ',$strings),
-                'limit' => 3
-            ]))
-            */
-            if($items = Item::rawSql('
-                SELECT * FROM item 
-                  WHERE name LIKE '.implode(' OR name LIKE ',$strings) .' 
-                  OR city LIKE '.implode(' OR city LIKE ',$strings) .' 
-                
-                LIMIT 0,3
-            '))
-            {
+            $offertypes = array();
+                foreach ($item->offertypes as $ot) {
+                $offertypes[] = $ot->name;
+            }
 
+            $street = $item->street;
+            if(count($item->offertypes) == 1 && $item->offertypes[0]->id == 3) {
+                $street = '';
+            }
 
+            $contact = array();
+            if($item->email) {
+                $contact[] = $item->email;
+            }
+            if($item->phone) {
+                $contact[] = $item->phone;
+            }
+
+            $cleaned[] = [
+                'id' => (int)$item->id,
+                'name' => $item->name.'',
+                'street' => $street.'',
+                'products' => $products,
+                'offertypes' => $offertypes,
+                'city' => $item->city.'',
+                'zip' => $item->zip.'',
+                'contact' => $contact,
+                'web' => $item->web.'',
+            ];
+
+        }
+        return $this->jsonResponse($cleaned);
+    }
+
+    public function apiSearchAction() {
+        if($string = $this->dispatcher->getParam('string')) {
+            $string = preg_replace('/[^0-9a-zA-Z ßäöüÄÖÜé\-_]/', '', $string);
+
+            if($items = Item::rawSql('SELECT * FROM item WHERE name LIKE REPLACE("' . $string . '%", " ", "%") AND name LIKE REPLACE("%' . $string . '%", " ", "%") LIMIT 0,3')) {
                 $out = [];
-
                 foreach ($items as $item) {
-
                     $street = $item->street;
+
+                    // Skip if no offertype is set
+                    if(count($item->offertypes) == 0) {
+                        continue;
+                    }
+                    
+                    // Skip if no product is set
+                    if(count($item->products) == 0) {
+                        continue;
+                    }
 
                     $offertypes = [];
                     foreach ($item->offertypes as $ot) {
                         $offertypes[] = $ot->id;
                     }
-
                     /*
                      * if only speaker dont send the streenname
                      */
                     if(count($item->offertypes) == 1 && $item->offertypes[0]->id == 3) {
                         $street = '';
                     }
-
                     $out[] = [
                         'id' => (int)$item->id,
                         'name' => $item->name.'',
@@ -78,13 +107,11 @@ class ItemController extends ControllerBase
                 }
 
                 return $this->jsonResponse([
-                    'items' => $out
+                    'items' => $out,
+                    'search' => $string
                 ]);
-
-
             }
         }
-
         return $this->jsonResponse([]);
     }
 
@@ -107,25 +134,35 @@ class ItemController extends ControllerBase
                 'webshop' => 4
             ];
 
+            $countries = array("DE", "AT", "CH");
+            if(isset($_GET['countries'])) {
+                $countries = $_GET['countries'];
+            }
+
+            $products = array("cola", "bier", "holunder", "muntermate");
+            if(isset($_GET['products'])) {
+                $products = $_GET['products'];
+            }
+
             foreach ($_GET['types'] as $type) {
                 if(isset($types[$type])) {
                     $options[(int)$types[$type]] = true;
                 }
             }
 
-            $items = Item::listMarker();
+            $items = Item::listMarker($countries, $products);
+            // return var_dump($items);
 
             $out = [];
             foreach ($items as $r) {
-
-
                 $collmex_groups = explode(',',$r->getCollmexAddressGroups());
 
                 /*
-                 * hide all items with special group 93 :o)
-                 * and hide all items with group 16
+                 * Hide items in group 16 or 93.
+                 * 
+                 * 16: ehemalige Kunden
+                 * 93: möchte auf eigenen Wunsch nicht auf die Landkarte
                  */
-
                 if(in_array('93',$collmex_groups) || in_array('16',$collmex_groups)){
                     continue;
                 }
@@ -133,17 +170,16 @@ class ItemController extends ControllerBase
                 if(!isset($out[(int)$r->id])) {
                     $out[(int)$r->id] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[]];
                 }
-                $out[(int)$r->id][2][] = (int)$r->offertype;
-                $out[(int)$r->id][3] = $collmex_groups;
-
+                if(!in_array((int)$r->offertype, $out[(int)$r->id][2])) {
+                    $out[(int)$r->id][2][] = (int)$r->offertype;
+                }
             }
 
             /*
-             * filter items by offertype but send all offertypes of each item
+             * Apply filter for offertypes
              */
             $out2 = [];
-            foreach ($out as $r) {
-
+            foreach ($out as $r) {                
                 $check = false;
 
                 foreach ($r[2] as $offertype) {
@@ -155,31 +191,14 @@ class ItemController extends ControllerBase
                     $out2[] = $r;
                 }
 
-            }
 
+            }
             return $this->jsonResponse(array_values($out2));
 
         }
 
         // if no types defined
         return $this->jsonResponse([]);
-
-        /*
-         * simple output
-         */
-        /*
-        $out = [];
-        foreach ($items as $r) {
-            $out[] = [(int)$r->id,[floatval($r->lat),floatval($r->lng)],[(int)$r->offertype]];
-        }
-
-        return $this->jsonResponse(array_values($out));
-        */
-        
-        /*
-         * reduce data outut
-         */
-
     }
     
     /**
@@ -318,154 +337,4 @@ class ItemController extends ControllerBase
             
         }
     }
-
-    /**
-     * Creates a new item
-     */
-    public function createAction()
-    {
-
-        if (!$this->request->isPost()) {
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "index"
-            ));
-        }
-
-        $item = new Item();
-
-        $item->collmex_customer_id = $this->request->getPost("collmex_customer_id");
-        $item->name = $this->request->getPost("name");
-        $item->street = $this->request->getPost("street");
-        $item->street_number = $this->request->getPost("street_number");
-        $item->zip = $this->request->getPost("zip");
-        $item->city = $this->request->getPost("city");
-        $item->country = $this->request->getPost("country");
-        $item->lat = $this->request->getPost("lat");
-        $item->lng = $this->request->getPost("lng");
-        $item->web = $this->request->getPost("web");
-        $item->email = $this->request->getPost("email", "email");
-        $item->location_checked = $this->request->getPost("location_checked");
-        
-
-        if (!$item->save()) {
-            foreach ($item->getMessages() as $message) {
-                $this->flash->error($message);
-            }
-
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "new"
-            ));
-        }
-
-        $this->flash->success("item was created successfully");
-
-        return $this->dispatcher->forward(array(
-            "controller" => "item",
-            "action" => "index"
-        ));
-
-    }
-
-    /**
-     * Saves a item edited
-     *
-     */
-    public function saveAction()
-    {
-
-        if (!$this->request->isPost()) {
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "index"
-            ));
-        }
-
-        $id = $this->request->getPost("id");
-
-        $item = Item::findFirstByid($id);
-        if (!$item) {
-            $this->flash->error("item does not exist " . $id);
-
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "index"
-            ));
-        }
-
-        $item->collmex_customer_id = $this->request->getPost("collmex_customer_id");
-        $item->name = $this->request->getPost("name");
-        $item->street = $this->request->getPost("street");
-        $item->street_number = $this->request->getPost("street_number");
-        $item->zip = $this->request->getPost("zip");
-        $item->city = $this->request->getPost("city");
-        $item->country = $this->request->getPost("country");
-        $item->lat = $this->request->getPost("lat");
-        $item->lng = $this->request->getPost("lng");
-        $item->web = $this->request->getPost("web");
-        $item->email = $this->request->getPost("email", "email");
-        $item->location_checked = $this->request->getPost("location_checked");
-        
-
-        if (!$item->save()) {
-
-            foreach ($item->getMessages() as $message) {
-                $this->flash->error($message);
-            }
-
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "edit",
-                "params" => array($item->id)
-            ));
-        }
-
-        $this->flash->success("item was updated successfully");
-
-        return $this->dispatcher->forward(array(
-            "controller" => "item",
-            "action" => "index"
-        ));
-
-    }
-
-    /**
-     * Deletes a item
-     *
-     * @param string $id
-     */
-    public function deleteAction($id)
-    {
-
-        $item = Item::findFirstByid($id);
-        if (!$item) {
-            $this->flash->error("item was not found");
-
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "index"
-            ));
-        }
-
-        if (!$item->delete()) {
-
-            foreach ($item->getMessages() as $message) {
-                $this->flash->error($message);
-            }
-
-            return $this->dispatcher->forward(array(
-                "controller" => "item",
-                "action" => "search"
-            ));
-        }
-
-        $this->flash->success("item was deleted successfully");
-
-        return $this->dispatcher->forward(array(
-            "controller" => "item",
-            "action" => "index"
-        ));
-    }
-
 }

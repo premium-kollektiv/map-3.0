@@ -2,154 +2,15 @@
 
 class FeedbackController extends ControllerBase
 {
-
-    public function indexAction()
-    {
-
+    // https://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+    public function startsWith($haystack, $needle) {
+        // search backwards starting from haystack length characters from the end
+        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
-    public function updateAction()
-    {
+    public function indexAction() {}
 
-        require_once '../app/lib/simple_html_dom.php';
-
-        try{
-
-            $out = [];
-
-            $table = file_get_html('http://www.premium-cola.de/kontakte');
-
-            // Find all images
-            foreach($table->find('table[class=contentpaneopen]') as $table) {
-
-                $html = str_get_html($table);
-
-                foreach ($html->find('p') as $p) {
-                    $text = trim($p->innertext);
-                    $text = strtolower($text);
-
-                    if(substr($text,0, 4) == 'plz ') {
-                        //echo 'check: ' . $text .'<br><hr>';
-
-                        $text = substr($text,4);
-                        $text = trim($text);
-
-                        $mail = 'raphael@geldfrei.net';
-
-                        $item = str_get_html($text);
-                        foreach ($item->find('a') as $maillink) {
-                            if($maillink->href != '' && substr($maillink->href,0,7) == 'mailto:') {
-                                $mail = trim(substr($maillink->href,7));
-                                if(!isset($out[$mail])) {
-                                    $out[$mail] = [];
-                                }
-                            }
-                        }
-
-                        $text = explode('<a ', $text);
-
-                        $text = $text[0];
-
-                        $parts = explode(',',$text);
-
-
-                        //echo $mail . ' = ' . print_r($parts,true) . '<br><hr>';
-
-                        if(count($parts > 0)) {
-                            $out[$mail]['country'] = [];
-
-                            foreach ($parts as $p) {
-                                $p = trim($p);
-                                $p = str_replace([':'],'',$p);
-
-
-                                /*
-                                 * fix first zero zip
-                                 */
-                                if($p == '0') {
-
-                                    $out[$mail][0] = 0;
-                                    continue;
-                                }
-
-
-                                /*
-                                 * detect country
-                                 */
-                                if(strlen($p) > 1 && (int)$p == 0) {
-                                    $p = trim($p);
-
-                                    $out[$mail]['country'][] = strtoupper($p);
-                                    continue;
-                                }
-
-
-                                /*
-                                 * extract zip range
-                                 */
-                                if(strpos($p,'-') !== false) {
-
-                                    $pp = explode('-',$p);
-
-                                    $range = range((int)$pp[0],(int)end($pp));
-
-                                    foreach ($range as $r) {
-                                        $out[$mail][$r] = $r;
-                                    }
-
-                                    continue;
-                                }
-
-                                /*
-                                 * simple lonely zip area
-                                 */
-                                if((int)$p > 0) {
-                                    $out[$mail][(int)$p] = (int)$p;
-                                }
-
-                            }
-
-                            /*
-                             * default country DE
-                             */
-                            if(empty($out[$mail]['country'])) {
-                                $out[$mail]['country'] = ['DE'];
-                            }
-                        }
-                    }
-                }
-            }
-
-            /*
-             * save array to file
-             */
-            file_put_contents('../app/config/feedback.txt',serialize($out));
-
-            /*
-             * simple output for control
-             */
-            echo '<h1>Kontake update erfolgreich!</h1>';
-
-            foreach ($out as $mail => $values) {
-
-                echo '<h4>' . $mail . ' ('.implode(', ',$values['country']).')</h4>';
-
-                unset($values['country']);
-                echo implode(', ', $values) . '<br /><br /><hr />';
-
-            }
-
-
-            exit();
-
-        } catch(Exception $e) {
-            echo 'Fehler..';
-            die();
-        }
-    }
-
-    public function zipmailAction()
-    {
+    public function zipmailAction() {
         if(
             isset($_POST['email']) &&
             isset($_POST['feedback']) && 
@@ -173,7 +34,7 @@ class FeedbackController extends ControllerBase
 
                 $feedback .= "\n\n===========================================\n\nLandkarten Adresse um die es geht:\n";
 
-                $feedback .= $item->name . "\n" . $item->street . "\n" . $item->zip . ' ' . $item->city;
+                $feedback .= $item->name . "\n" . $item->street . "\n" . $item->zip . " " . $item->city . "\nCollmex Address ID: " . $item->collmex_address_id;
 
                 /*
                  * gnereate feedback mail subject
@@ -187,71 +48,29 @@ class FeedbackController extends ControllerBase
                     $from = $_POST['email'];
                 }
 
-                /*
-                 * get zip specific contact mails from file
-                 */
-                $contact = file_get_contents('../app/config/feedback.txt');
-                $contact = unserialize($contact);
+                $contacts_file = file_get_contents('../app/config/feedback.txt');
+                $contacts_line = explode("\n", $contacts_file);
+                $contacts = array();
+                foreach($contacts_line as $contact) {
+                    $contacts[] = explode(";", $contact);
+                }
 
-                $contact = [
+                // Default email address
+                $contact_email = "elena@premium-cola.de";
 
-                ];
-
-                // set one default contact for each country
-                // its the first simply
-
-                $default_contact_for_country = [
-                    'mail' => 'elena@premium-cola.de'
-                ];
-                $zip_match = false;
-
-                foreach ($contact as $mail => $c) {
-                    //check is contact for country?
-                    if(in_array($country,$c['country'])) {
-                        if($default_contact_for_country === false) {
-                            $default_contact_for_country = $c;
-                            $default_contact_for_country['mail'] = $mail;
-                        }
-
-                        // not important for zips
-                        unset($c['country']);
-
-                        foreach ($c as $ziparea){
-
-                            // checked for matched ziparea
-                            if($ziparea.'' == substr($zip.'',0,strlen($ziparea))) {
-                                $zip_match = true;
-
-                                // send mail...
-
-
-
-                                $this->mail($mail,$subject,$feedback,$from);
-
-                                // monitoing
-                                $feedback = 'mail to => ' . $mail . "\n\n" . $feedback;
-                                $this->mail('premium-karte@vahp.de',$subject,$feedback,$from);
-
-                                return $this->jsonResponse([
-                                    'msg' => 'Nachricht wurde an ' . $mail . ' versendet.'
-                                ]);
-                            }
-                        }
+                // Set specific email address if available
+                foreach($contacts as $contact) {
+                    if($country == $contact[0] && $this->startsWith($zip, $contact[1])) {
+                        $contact_email = $contact[2];
                     }
                 }
 
-                if(!$zip_match) {
-
-                    // send mail to default
-                    $this->mail($default_contact_for_country['mail'],$subject,$feedback,$from);
-
-                    // monitoing
-                    $feedback = 'NO ZIP MATCH => ' . $default_contact_for_country['mail'] . "\n\n" . $feedback;
-                    $this->mail('premium-karte@vahp.de',$subject,$feedback,$from);
-
+                if($this->mail($contact_email, $subject, $feedback, $from)) {
                     return $this->jsonResponse([
-                        'msg' => 'Nachricht wurde an ' . $default_contact_for_country['mail'] . ' versendet.'
+                        'msg' => 'Nachricht wurde an ' . $contact_email . ' versendet.',
                     ]);
+                } else {
+                    return $this->jsonResponseError('Nachricht konnte nicht gesendet werden.');
                 }
             }
 

@@ -1,10 +1,14 @@
-# map-3.0
+# Landkarte
 
 Premium map based on leaflet and openstreetmap tiles
 
-## demo
+## Run local development server
 
-development demo: http://premium.geldfrei.net/
+```sh
+vagrant up
+```
+
+Now fire up your browser and open http://localhost:8085
 
 ## Installation on ubuntu-server 16.04
 
@@ -24,10 +28,10 @@ sudo mv composer.phar /usr/local/bin/composer
 ### Install zephir
 
 ```sh
-sudo composer global require "phalcon/zephir:dev-master" 
+sudo composer global require "phalcon/zephir:dev-master"
 ```
 
-### Install phalcon dev tool 
+### Install phalcon dev tool
 
 ```sh
 sudo composer require "phalcon/devtools" -d /usr/local/bin/
@@ -50,23 +54,10 @@ sudo echo "extension=phalcon.so" >> /etc/php/7.0/cli/conf.d/20-phalcon.ini
 sudo service php7.0-fpm restart
 ```
 
-## Install nodejs
-
-```sh
-sudo apt-get install nodejs npm
-```
-
 ## Install npm dependencies
 
 ```sh
-npm install
 composer install
-```
-
-## build
-
-```sh
-NODE_ENV=production webpack
 ```
 
 ## configuration
@@ -83,12 +74,25 @@ edit config vars for mysql connection and collmex api connection
 nano ./app/config/config.php
 ```
 
-## run collmex sync
+## Run collmex sync
 
 ```sh
+# Fetch new item from collmex database
 php app/cli.php update
+
+# Enrich items with geolocation information
+php app/cli.php update geo
 ```
 
-## point host to public folder..
+## Add, list, delete products
 
-## ready! :)
+```sh
+# Add new product
+php app/cli.php product add "New beverage name" "Beverage description" collmexId
+
+# List all products
+php app/cli.php product list
+
+# Delete existing product
+php app/cli.php prodct delete 5
+```

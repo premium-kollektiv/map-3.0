@@ -41,13 +41,13 @@ class ControllerBase extends Controller
         $this->loadMailer();
 
         $message = Swift_Message::newInstance($subject)
-            ->setFrom($from)
+            ->setFrom($this->config->smtp->from)
+            ->setReplyTo($from)
             ->setTo($to)
             ->setBody($body)
         ;
 
-        $result = $this->mail_mailer->send($message);
-
+        return $this->mail_mailer->send($message);
     }
 
 

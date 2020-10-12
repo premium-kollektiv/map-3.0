@@ -498,17 +498,32 @@ class Item extends \Phalcon\Mvc\Model
     /*
      * Raw query funcktion for output markers without data overhead
      */
-    public static function listMarker()
-    {
+    public static function listMarker($countries = array("DE", "AT", "CH"), $products = array("cola", "bier", "holunder", "muntermate")) {
+        // AND (item.country='DE' OR item.country='AT')
+        $sql_countries = "";
+        if(count($countries) == 1) {
+            $sql_countries = " AND item.country='" . $countries[0] . "'";
+        } else if($countries > 1) {
+            $sql_countries = " AND (item.country='";
+            $sql_countries .= implode($countries, "' OR item.country='");
+            $sql_countries .= "')";
+        }
+
+        // AND (product.name='cola' OR product.name='bier')
+        $sql_products = "";
+        if(count($products) == 1) {
+            $sql_products = " AND product.name='" . $products[0] . "'";
+        } else if($products > 1) {
+            $sql_products = " AND (product.name='";
+            $sql_products .= implode($products, "' OR product.name='");
+            $sql_products .= "')";
+        }
         // Base model
         $item = new Item();
-
-        $sql = 'SELECT i.id,i.lat,i.lng, ho.offertype_id AS offertype, collmex_address_groups FROM item i, item_has_offertype ho WHERE ho.item_id = i.id AND i.lat IS NOT NULL AND i.lng IS NOT NULL';
-
+        $sql = 'SELECT item.id, item.lat, item.lng, ho.offertype_id AS offertype, item.collmex_address_groups FROM item, item_has_offertype ho, item_has_product hp, product WHERE ho.item_id = item.id AND hp.item_id = item.id AND hp.product_id = product.id AND item.lat IS NOT NULL AND item.lng IS NOT NULL' . $sql_countries . $sql_products;
+    
         // Execute the query
         return new Resultset(null,$item,$item->getReadConnection()->query($sql));
-
-
     }
 
     /**
