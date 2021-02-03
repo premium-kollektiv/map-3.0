@@ -6,8 +6,8 @@ Vagrant.configure("2") do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  # config.vm.box = "ubuntu/xenial64"
-  config.vm.box = "phalconphp/xenial64"
+  # all available versions: https://app.vagrantup.com/ubuntu
+  config.vm.box = "ubuntu/bionic64"
   config.vm.network "forwarded_port", guest: 80, host: 8085, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 3306, host: 3316, host_ip: "127.0.0.1"
 
@@ -24,18 +24,21 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant"
   
   config.vm.provision "shell", inline: <<-SHELL
+    set -e # Exit immediately if a simple command exits with a non-zero status
+    set -x # Print the command before executing it
+
     curl -s https://packagecloud.io/install/repositories/phalcon/stable/script.deb.sh | sudo bash
 
     echo "mysql-server-5.6 mysql-server/root_password password r00tme" | sudo debconf-set-selections
     echo "mysql-server-5.6 mysql-server/root_password_again password r00tme" | sudo debconf-set-selections
 
     sudo apt-get update
-    sudo apt-get install -y php7.0-dev php7.0-fpm php7.0-phalcon php7.0-mysql php7.0-zip php7.0-curl apache2 libapache2-mod-fastcgi nodejs npm mysql-server
-    sudo cp /vagrant/apache2-default /etc/apache2/sites-enabled/000-default.conf
-    sudo a2enmod actions fastcgi alias rewrite proxy proxy_fcgi
-    sudo a2enconf php7.0-fpm
+    sudo apt-get install -y php7.2-cli php7.2-common php7.2-curl php7.2-dev php7.2-fpm php7.2-json php7.2-mysql php7.2-phalcon=3.4.0-5+php7.2 php7.2-zip apache2 mysql-server
+    sudo cp /vagrant/apache2-default /etc/apache2/sites-enabled/000-default.con
+    sudo a2enmod alias rewrite proxy proxy_fcgi
+    sudo a2enconf php7.2-fpm
     sudo phpenmod phalcon
-    sudo systemctl restart apache2 php7.0-fpm
+    sudo systemctl restart apache2 php7.2-fpm
 
     mysqladmin create --show-warnings=false cola -pr00tme
     mysql -u root -pr00tme cola < /vagrant/docs/database/schema.sql

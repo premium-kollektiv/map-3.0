@@ -10,6 +10,12 @@ vagrant up
 
 Now fire up your browser and open http://localhost:8085
 
+### Restart all over again
+
+```sh
+vagrant destroy --force && vagrant up
+```
+
 ## Installation on ubuntu-server 16.04
 
 ## install phalcon framework

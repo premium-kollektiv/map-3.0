@@ -6,3 +6,6 @@ app/config/feedback.txt
 *.log
 .DS_Store
 public/info.php
+# When using vagrant:
+# installing apache and having /var/www/html mounted will create this default index.html file
+index.html
