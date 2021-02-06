@@ -18,6 +18,43 @@ Copy `app/config/config.vagrant.default.php` to `app/config/config.php` as a sta
 vagrant destroy --force && vagrant up
 ```
 
+## configuration
+
+copy config template
+
+```sh
+cp ./app/config/config.sample.php ./app/config/config.php
+```
+
+edit config vars for mysql connection and collmex api connection
+
+```sh
+nano ./app/config/config.php
+```
+
+## Run collmex sync
+
+```sh
+# Fetch new item from collmex database
+php app/cli.php update
+
+# Enrich items with geolocation information
+php app/cli.php update geo
+```
+
+## Add, list, delete products
+
+```sh
+# Add new product
+php app/cli.php product add "New beverage name" "Beverage description" collmexId
+
+# List all products
+php app/cli.php product list
+
+# Delete existing product
+php app/cli.php product delete 5
+```
+
 ## Installation on ubuntu-server 16.04
 
 ## install phalcon framework
@@ -66,41 +103,4 @@ sudo service php7.0-fpm restart
 
 ```sh
 composer install
-```
-
-## configuration
-
-copy config template
-
-```sh
-cp ./app/config/config.sample.php ./app/config/config.php
-```
-
-edit config vars for mysql connection and collmex api connection
-
-```sh
-nano ./app/config/config.php
-```
-
-## Run collmex sync
-
-```sh
-# Fetch new item from collmex database
-php app/cli.php update
-
-# Enrich items with geolocation information
-php app/cli.php update geo
-```
-
-## Add, list, delete products
-
-```sh
-# Add new product
-php app/cli.php product add "New beverage name" "Beverage description" collmexId
-
-# List all products
-php app/cli.php product list
-
-# Delete existing product
-php app/cli.php prodct delete 5
 ```
