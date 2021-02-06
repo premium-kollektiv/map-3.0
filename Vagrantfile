@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
 
     sudo apt-get update
     sudo apt-get install -y php7.2-cli php7.2-common php7.2-curl php7.2-dev php7.2-fpm php7.2-json php7.2-mysql php7.2-phalcon=3.4.0-5+php7.2 php7.2-zip apache2 mysql-server
-    sudo cp /vagrant/apache2-default /etc/apache2/sites-enabled/000-default.con
+    sudo cp /vagrant/apache2-default /etc/apache2/sites-enabled/000-default.conf
     sudo a2enmod alias rewrite proxy proxy_fcgi
     sudo a2enconf php7.2-fpm
     sudo phpenmod phalcon
