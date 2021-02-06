@@ -85,23 +85,23 @@ class BaseTask extends \Phalcon\Cli\Task
         if($data = $this->collmexGet('ADDRESS_GET')){
             $out = [];
             foreach ($data as $d) {
-                if(count($d) == 36){
-
-                    $out[] = [
-                        'address_id' => $d[1],
-                        'name' => $d[7],
-                        'firstname' => $d[5],
-                        'surname' => $d[6],
-                        'street' => $d[9],
-                        'zip' => $d[10],
-                        'city' => $d[11],
-                        'web' => $d[28],
-                        'address_group' => $d[31],
-                        'phone' => $d[15],
-                        'country' => $d[14],
-                        'email' => $d[17]
-                    ];
+                if($d[0] !== "CMXADR") {
+                    continue;
                 }
+                $out[] = [
+                    'address_id' => $d[1],
+                    'name' => $d[7],
+                    'firstname' => $d[5],
+                    'surname' => $d[6],
+                    'street' => $d[9],
+                    'zip' => $d[10],
+                    'city' => $d[11],
+                    'web' => $d[28],
+                    'address_group' => $d[31],
+                    'phone' => $d[15],
+                    'country' => $d[14],
+                    'email' => $d[17]
+                ];
             }
             //file_put_contents('/tmp/collmexAddressGet.tmp',serialize($out));
             return $out;
