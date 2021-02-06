@@ -10,6 +10,8 @@ vagrant up
 
 Now fire up your browser and open http://localhost:8085
 
+Copy `app/config/config.vagrant.default.php` to `app/config/config.php` as a starting point with working database config.
+
 ### Restart all over again
 
 ```sh
