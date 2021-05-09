@@ -45,6 +45,7 @@ Vagrant.configure("2") do |config|
 
     sudo curl -sS http://getcomposer.org/installer | php
     sudo mv composer.phar /usr/local/bin/composer
+    sudo updatedb
   SHELL
 
 end
