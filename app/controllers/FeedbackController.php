@@ -55,7 +55,7 @@ class FeedbackController extends ControllerBase
                 }
 
                 // Default email address
-                $contact_email = "elena@premium-cola.de";
+                $contact_email = "anna-lilja@premium-kollektiv.de";
 
                 // Set specific email address if available
                 foreach($contacts as $contact) {
