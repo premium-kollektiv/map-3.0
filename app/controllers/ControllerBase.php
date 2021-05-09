@@ -17,11 +17,11 @@ class ControllerBase extends Controller
 
             $this->mail_from = $this->config->smtp->from;
 
-            $this->mail_transport = Swift_SmtpTransport::newInstance($this->config->smtp->host, 25)
+            $this->mail_transport = (new Swift_SmtpTransport($this->config->smtp->host, 25))
                 ->setUsername($this->config->smtp->user)
                 ->setPassword($this->config->smtp->pass)
             ;
-            $this->mail_mailer = Swift_Mailer::newInstance($this->mail_transport);
+            $this->mail_mailer = new Swift_Mailer($this->mail_transport);
             $this->mail_loaded = true;
         }
 
@@ -40,7 +40,7 @@ class ControllerBase extends Controller
 
         $this->loadMailer();
 
-        $message = Swift_Message::newInstance($subject)
+        $message = (new Swift_Message($subject))
             ->setFrom($this->config->smtp->from)
             ->setReplyTo($from)
             ->setTo($to)
