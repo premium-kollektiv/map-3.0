@@ -18,6 +18,14 @@ Copy `app/config/config.vagrant.default.php` to `app/config/config.php` as a sta
 vagrant destroy --force && vagrant up
 ```
 
+## composer
+
+install dependencies via
+
+```sh
+composer i
+```
+
 ## configuration
 
 copy config template
