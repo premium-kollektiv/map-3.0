@@ -3,7 +3,7 @@
   "description": "Backend service for the Premium Landkarte",
   "require": {
     "mjaschen/collmex": "^0.6.2",
-    "swiftmailer/swiftmailer": "@stable"
+    "swiftmailer/swiftmailer": "^v6.2.7"
   },
   "authors": [
     {
