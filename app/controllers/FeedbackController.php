@@ -19,7 +19,6 @@ class FeedbackController extends ControllerBase
         ) {
 
             $id = (int)$_POST['id'];
-
             $from = false;
 
             if($item = Item::findFirst($id)) {
@@ -70,11 +69,11 @@ class FeedbackController extends ControllerBase
                         'msg' => 'Nachricht wurde an ' . $contact_email . ' versendet.',
                     ]);
                 } else {
-                    return $this->jsonResponseError('Nachricht konnte nicht gesendet werden.');
+                    return $this->jsonResponseError('Nachricht konnte nicht gesendet werden, weil die eMail nicht rausging.');
                 }
             }
 
-            return $this->jsonResponseError('Nachricht konnte nicht gesendet werden.');
+            return $this->jsonResponseError('Nachricht konnte nicht gesendet werden, weil die Id nicht bekannt ist.');
 
         }
         
