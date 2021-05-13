@@ -17,7 +17,7 @@ class ControllerBase extends Controller
 
             $this->mail_from = $this->config->smtp->from;
 
-            $this->mail_transport = (new Swift_SmtpTransport($this->config->smtp->host, 25))
+            $this->mail_transport = (new Swift_SmtpTransport($this->config->smtp->host, 465, 'ssl'))
                 ->setUsername($this->config->smtp->user)
                 ->setPassword($this->config->smtp->pass)
             ;
