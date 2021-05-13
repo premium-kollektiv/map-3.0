@@ -1,6 +1,5 @@
 app/config/config.php
 app/cache/**
-app/config/feedback.txt
 /vendor/
 .vagrant
 *.log
