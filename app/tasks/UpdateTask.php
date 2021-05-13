@@ -238,6 +238,7 @@ class UpdateTask extends BaseTask
                     */
                     else {
                         $unused_records++;
+                        echo $item->name . ': ' . $item->city . '; ';
                         $item->delete();
                         continue;
                     }
