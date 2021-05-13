@@ -1,9 +1,9 @@
-DE;10;uwe@premium-kollektiv.de
-DE;11;uwe@premium-kollektiv.de
-DE;12;uwe@premium-kollektiv.de
-DE;13;uwe@premium-kollektiv.de
-DE;14;uwe@premium-kollektiv.de
-DE;15;uwe@premium-kollektiv.de
+DE;10;max@premium-kollektiv.de
+DE;11;max@premium-kollektiv.de
+DE;12;max@premium-kollektiv.de
+DE;13;max@premium-kollektiv.de
+DE;14;max@premium-kollektiv.de
+DE;15;max@premium-kollektiv.de
 AT;16;doerte@premium-kollektiv.de
 AT;17;doerte@premium-kollektiv.de
 AT;18;doerte@premium-kollektiv.de
