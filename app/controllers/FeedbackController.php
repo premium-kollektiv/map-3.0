@@ -14,8 +14,7 @@ class FeedbackController extends ControllerBase
         if(
             isset($_POST['email']) &&
             isset($_POST['feedback']) && 
-            isset($_POST['id']) && 
-            isset($_POST['zip'])
+            isset($_POST['id'])
         ) {
 
             $id = (int)$_POST['id'];
