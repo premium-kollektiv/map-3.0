@@ -67,6 +67,14 @@ php app/cli.php product list
 php app/cli.php product delete 5
 ```
 
+## Production
+
+### Restore db-backup
+
+```bash
+mysql landkarte < /var/backups/rsnapshot/*/mysql/*.sql
+```
+
 ## Installation on ubuntu-server 16.04
 
 ## install phalcon framework
