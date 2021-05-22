@@ -8,6 +8,7 @@ class BaseTask extends \Phalcon\Cli\Task
         
         $country = trim($country);
         
+        // Has to be urlencoded to work with "getCoordinatesViaNominatim"
         $countrys = [
             'DE' => 'Germany',
             'AT' => 'Austria',
@@ -15,23 +16,19 @@ class BaseTask extends \Phalcon\Cli\Task
         ];
         
         if(isset($countrys[$country])) {
-            return ', ' . $countrys[$country];
+            return $countrys[$country];
         }
         
         return $country;
     }
-    
-    /**
-     * Method try to locate address through google maps api
-     * 
-     * @param type $address
-     * @return type
-     */
-    public function getCoordinates($address){
- 
-        $address = urlencode($address); // replace all the white space with "+" sign to match with google search pattern
 
-        $url = "http://nominatim.openstreetmap.org/search?format=json&limit=1&q=$address";
+    /**
+     * Method try to locate address through the Openstreetmap Nominatim API
+     */
+    public function getCoordinatesViaNominatim($street, $zip, $city, $country){
+        $address_parameters = "street=" . urlencode($street) . "&city=" . urlencode($city) . "&country=" . $country . "&postalcode=" . $zip;
+        $url = "https://nominatim.openstreetmap.org/search.php?format=jsonv2&limit=1&$address_parameters";
+
         ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)'); 
         $response = file_get_contents($url);
 
@@ -46,7 +43,7 @@ class BaseTask extends \Phalcon\Cli\Task
                 'lng' => $json[0]['lon']
             ];
         }
-    }    
+    }
 
     public function error($msg, $exit = true) {
         echo PHP_EOL . 'Fehler: ' . $msg . PHP_EOL;

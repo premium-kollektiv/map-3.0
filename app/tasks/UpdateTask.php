@@ -370,21 +370,17 @@ class UpdateTask extends BaseTask
                     
                     $item->geolocate_count = (int)$item->geolocate_count+1;
 
-                    // $address_string = $item->street . ', ' . $item->zip . ', ' . $item->city . $this->countryMapper($item->country);
-                    $address_string = $item->street . ', ' . $item->city . ', ' . $this->countryMapper($item->country);
-
                     /*
                      * change address string to city when offertype is only speaker
                      */
-
+                    $geo = NULL;
                     if(count($item->offertypes) == 1 && $item->offertypes[0]->id == $this->offertype_sprecher->id) {
-
-                        // $address_string = $item->zip . ', ' . $item->city .  $this->countryMapper($item->country);
-                        $address_string = $item->city . ', ' . $this->countryMapper($item->country);
-
+                        $geo = $this->getCoordinatesViaNominatim("", "", $item->city, $this->countryMapper($item->country));
+                    } else {
+                        $geo = $this->getCoordinatesViaNominatim($item->street, $item->zip, $item->city, $this->countryMapper($item->country));
                     }
 
-                    if($geo = $this->getCoordinates($address_string)) {
+                    if($geo) {
                         $item->setLat($geo['lat']);
                         $item->setLng($geo['lng']);
                         
