@@ -40,8 +40,6 @@ edit config vars for mysql connection and collmex api connection
 nano ./app/config/config.php
 ```
 
-<<<<<<< HEAD
-
 ## Deploy
 
 Run `rsync -e ssh -rv --exclude='app/config/config.php' app public vendor composer.json composer.lock premium:/var/www/api.landkarte.premium-cola.de/` (replace premium with your access to the prod server) to deploy to production.
