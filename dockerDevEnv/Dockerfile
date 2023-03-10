@@ -8,13 +8,11 @@
 
 FROM ubuntu:22.04
 ENV container docker
-RUN apt-get update -y && apt-get dist-upgrade -y
+ENV DEBIAN_FRONTEND noninteractive 
+RUN apt-get update -y
 
 # Install system dependencies, you may not need all of these
 RUN apt-get install -y --no-install-recommends ssh sudo libffi-dev systemd openssh-client
-
-# Needed to run the Vagrant provisioning script
-RUN apt-get install -y curl gnupg apt-transport-https
 
 # Add vagrant user and key for SSH
 RUN useradd --create-home -s /bin/bash vagrant
@@ -26,6 +24,10 @@ RUN chmod 700 /home/vagrant/.ssh
 ADD https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub /home/vagrant/.ssh/authorized_keys
 RUN chmod 600 /home/vagrant/.ssh/authorized_keys
 RUN chown -R vagrant:vagrant /home/vagrant/.ssh
+
+# Needed to run the Vagrant provisioning script
+RUN apt-get install -y curl gnupg apt-transport-https
+RUN apt-get install -y software-properties-common
 
 # Start SSH
 RUN mkdir /var/run/sshd
