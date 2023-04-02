@@ -40,37 +40,55 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", inline: <<-SHELL
       set -e # Exit immediately if a simple command exits with a non-zero status
       set -x # Print the command before executing it
-  
-      sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password r00tme"
-      sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password r00tme"
 
       sudo add-apt-repository -y ppa:ondrej/php
       sudo apt-get update
-      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y php-phalcon5
+      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y php-phalcon5 php8.1-phalcon5
       # at the time of writing this automatically installed:
       # ii  php-common                   2:93+ubuntu22.04.1+deb.sury.org+2       all          Common files for PHP packages
       # ii  php-phalcon5                 5.1.2-1+ubuntu22.04.1+deb.sury.org+2    arm64        full-stack PHP framework delivered as a C-extension
       # ii  php-psr                      1.2.0-5+ubuntu22.04.1+deb.sury.org+1    arm64        PSR interfaces for PHP
-      # ii  php8.2-cli                   8.2.3-1+ubuntu22.04.1+deb.sury.org+1    arm64        command-line interpreter for the PHP scripting language
-      # ii  php8.2-common                8.2.3-1+ubuntu22.04.1+deb.sury.org+1    arm64        documentation, examples and common module for PHP
-      # ii  php8.2-opcache               8.2.3-1+ubuntu22.04.1+deb.sury.org+1    arm64        Zend OpCache module for PHP
-      # ii  php8.2-phpdbg                8.2.3-1+ubuntu22.04.1+deb.sury.org+1    arm64        server-side, HTML-embedded scripting language (PHPDBG binary)
+      # ii  php8.1-cli                   8.1.17-1+ubuntu22.04.1+deb.sury.org+1   arm64        command-line interpreter for the PHP scripting language
+      # ii  php8.1-common                8.1.17-1+ubuntu22.04.1+deb.sury.org+1   arm64        documentation, examples and common module for PHP
+      # ii  php8.1-opcache               8.1.17-1+ubuntu22.04.1+deb.sury.org+1   arm64        Zend OpCache module for PHP
+      # ii  php8.1-phalcon5              5.1.2-1+ubuntu22.04.1+deb.sury.org+2    arm64        full-stack PHP framework delivered as a C-extension
+      # ii  php8.1-phpdbg                8.1.17-1+ubuntu22.04.1+deb.sury.org+1   arm64        server-side, HTML-embedded scripting language (PHPDBG binary)
+      # ii  php8.1-readline              8.1.17-1+ubuntu22.04.1+deb.sury.org+1   arm64        readline module for PHP
+      # ii  php8.2-cli                   8.2.4-1+ubuntu22.04.1+deb.sury.org+1    arm64        command-line interpreter for the PHP scripting language
+      # ii  php8.2-common                8.2.4-1+ubuntu22.04.1+deb.sury.org+1    arm64        documentation, examples and common module for PHP
+      # ii  php8.2-opcache               8.2.4-1+ubuntu22.04.1+deb.sury.org+1    arm64        Zend OpCache module for PHP
+      # ii  php8.2-phpdbg                8.2.4-1+ubuntu22.04.1+deb.sury.org+1    arm64        server-side, HTML-embedded scripting language (PHPDBG binary)
       # ii  php8.2-psr                   1.2.0-5+ubuntu22.04.1+deb.sury.org+1    arm64        PSR interfaces for PHP
-      # ii  php8.2-readline              8.2.3-1+ubuntu22.04.1+deb.sury.org+1    arm64        readline module for PHP
+      # ii  php8.2-readline              8.2.4-1+ubuntu22.04.1+deb.sury.org+1    arm64        readline module for PHP
       # Additionally we need:
-      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y php8.2-common php8.2-curl php8.2-dev php8.2-fpm php8.2-mysql php8.2-zip apache2 mysql-server-8.0
+      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y php8.2-common php8.2-curl php8.2-dev php8.2-fpm php8.2-mysql php8.2-zip apache2
+
+      sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password r00tme"
+      sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password r00tme"
+      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server-8.0
+
       sudo cp /vagrant/apache2-default /etc/apache2/sites-enabled/000-default.conf
       sudo a2enmod alias rewrite proxy proxy_fcgi setenvif
       sudo a2enconf php8.2-fpm
       sudo phpenmod phalcon
       sudo systemctl restart apache2 php8.2-fpm
+      sudo systemctl start mysql
   
-    #  mysqladmin create --show-warnings=false cola -pr00tme
-    #  mysql -u root -pr00tme cola < /vagrant/docs/database/schema.sql
+      mysqladmin create --show-warnings=false cola -u root -pr00tme
+      mysql -u root -pr00tme cola < /vagrant/docs/database/schema.sql
   
-    #   sudo curl -sS http://getcomposer.org/installer | php
-    #   sudo mv composer.phar /usr/local/bin/composer
-    #   sudo updatedb
+      sudo curl -sS http://getcomposer.org/installer | php
+      sudo mv composer.phar /usr/local/bin/composer
+
+      # locate infrastructure
+      sudo DEBIAN_FRONTEND=noninteractive apt-get install -y locate
+      sudo updatedb.findutils
+
+      cd /vagrant/
+      composer install
+      composer outdated
+      cp -n app/config/config.vagrant.default.php app/config/config.php
+      php8.1 app/cli.php
     SHELL
   
   end

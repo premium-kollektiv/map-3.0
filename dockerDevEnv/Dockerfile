@@ -25,6 +25,9 @@ ADD https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub 
 RUN chmod 600 /home/vagrant/.ssh/authorized_keys
 RUN chown -R vagrant:vagrant /home/vagrant/.ssh
 
+# Install quality of live features
+RUN apt-get install -y --no-install-recommends vim less
+
 # Needed to run the Vagrant provisioning script
 RUN apt-get install -y curl gnupg apt-transport-https
 RUN apt-get install -y software-properties-common
