@@ -95,7 +95,6 @@ class BaseTask extends \Phalcon\Cli\Task
                     'city' => $d[11],
                     'web' => $d[28],
                     'address_group' => $d[31],
-                    'phone' => $d[15],
                     'country' => $d[14],
                     'email' => $d[17]
                 ];

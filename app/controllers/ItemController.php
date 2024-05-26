@@ -41,9 +41,6 @@ class ItemController extends ControllerBase
             if($item->email) {
                 $contact[] = $item->email;
             }
-            if($item->phone) {
-                $contact[] = $item->phone;
-            }
 
             $cleaned[] = [
                 'id' => (int)$item->id,
@@ -98,7 +95,6 @@ class ItemController extends ControllerBase
                         'zip' => $item->zip.'',
                         'web' => $item->web.'',
                         'email' => $item->email.'',
-                        'phone' => $item->phone,
                         'uri' => $item->id,
                         'lat' => $item->lat,
                         'lng' => $item->lng,
@@ -243,7 +239,6 @@ class ItemController extends ControllerBase
                     'zip' => $item->zip.'',
                     'web' => $item->web.'',
                     'email' => $item->email.'',
-                    'phone' => $item->phone,
                     'uri' => $item->id
                 ]);
             }
