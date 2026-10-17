@@ -67,6 +67,58 @@ php app/cli.php product list
 php app/cli.php product delete 5
 ```
 
+## Which data points are published (and which are sorted out)
+
+The map gets its markers from `GET /item/list` (`ItemController::apiListAction`). **A data point is published if, and only if, this endpoint returns it.** Everything else is considered sorted out, no matter whether it is stored in the database or not.
+
+The front-end requests all offer types, products and countries:
+
+```
+/item/list?types[]=laeden&types[]=haendler&types[]=sprecher&types[]=webshop&countries[]=DE&countries[]=AT&countries[]=CH&products[]=cola&products[]=bier&products[]=frohlunder&products[]=muntermate
+```
+
+With this request, the parts of criteria 4, 5 and 8 below that depend on the request ("was requested via ...") never sort anything out. The criteria then boil down to: the item has at least one offer type, at least one product and a country of `DE`, `AT` or `CH`. They only matter if the front-end lets users narrow down the filter.
+
+An address from Collmex has to pass all of the following criteria, in this order:
+
+| # | Criterion | Enforced by | Sorted out if... |
+|---|---|---|---|
+| 1 | Record type | `BaseTask::collmexAddressGet` | The Collmex record type is not `CMXADR` |
+| 2 | Opt-in | `UpdateTask::mainAction`, `deleteOldEntries` | The address is **not** in Collmex group **124** ("möchte auf die Landkarte") |
+| 3 | Still in Collmex | `UpdateTask::deleteOldEntries` | The `address_id` is not returned by Collmex any more |
+| 4 | Offer type | `UpdateTask::mapOffertypes`, `ItemController::apiListAction` | The address is in none of the groups **8** (Laden), **9** (Händler), **7** (Sprecher), **112** (Webshop), or none of its offer types was requested via `types` |
+| 5 | Product | `Item::listMarker` | The address is in none of the product groups **20** (Cola), **21** (Bier), **29** (Frohlunder), **33** (Muntermate), or none of its products was requested via `products` |
+| 6 | Opt-out / former customer | `ItemController::apiListAction` | The address is in Collmex group **93** ("möchte auf eigenen Wunsch nicht auf die Landkarte") or **16** ("ehemalige Kunden"), even if it is also in group 124 |
+| 7 | Coordinates | `UpdateTask::geoAction`, `Item::listMarker` | The item has no `lat`/`lng` (see below) |
+| 8 | Country | `Item::listMarker` | The Collmex country is not in the requested `countries` (default `DE`, `AT`, `CH`). An empty or other country code is sorted out |
+
+Additionally, `/item/list` returns an empty list if the request has no `types` parameter at all. Valid values for `types` are `laeden`, `haendler`, `sprecher` and `webshop`.
+
+The group ids are hard-coded in `UpdateTask::initialize()`, except for the product groups, which are read from `product.collmex_id`. The sync (`php app/cli.php update`) applies criteria 1–4 when it writes to the database. Criteria 5–8 are checked at request time by the API.
+
+### Coordinates (criterion 7)
+
+Coordinates are looked up via OpenStreetMap Nominatim by `php app/cli.php update geo`.
+
+- Only items with `geolocate_count < 20` are tried. Every attempt increments the counter, whether it succeeds or not. An item that Nominatim cannot find 20 times is given up on and stays sorted out until its street, zip or city changes in Collmex (this resets the counter) or the counter is reset manually in the database.
+- Items whose only offer type is *Sprecher* are located by city only.
+- An item that has not been geocoded yet (for example right after the first sync) is sorted out until `update geo` has run.
+
+### Things to know
+
+- **Product names.** The product filter compares the requested names with `product.name` in the database (case-insensitive), so the names the front-end sends (`cola`, `bier`, `frohlunder`, `muntermate`) have to match the product names in the database. They do for the seed data in `docs/database/schema.sql`. Note that the fallback used when `products` is omitted from the request lists `holunder` instead of `frohlunder`, so a request without `products` would never match Frohlunder items.
+- **Checks that look like criteria but are not.** The required-fields check in `addressCleanup()` uses `isset()`, so an address with an empty city or zip passes (it will most likely just fail geocoding). The empty-groups check in `checkAddressGroups()` can never trigger either, because `explode()` always returns at least one element. An invalid e-mail address does not sort out an item, the e-mail is just not stored.
+- **Other endpoints.** `/item/all`, `/search/<string>` and `/item/<id>` apply fewer checks than `/item/list` (for example none of them looks at groups 16/93, coordinates or country). They are not what the map shows, so they are not relevant for the criteria above.
+
+### Checklist: why is a shop missing on the map?
+
+1. Is the Collmex address in group 124, and *not* in 93 or 16?
+2. Does it have at least one offer type group (8, 9, 7, 112) **and** at least one product group (20, 21, 29, 33)?
+3. Was `php app/cli.php update` run after the change in Collmex, followed by `php app/cli.php update geo`?
+4. Does the item have `lat`/`lng` in the `item` table? If not, check `geolocate_count` (20 = given up) and whether the address is valid.
+5. Is the country `DE`, `AT` or `CH`?
+6. Does the request really include the item's offer type and product? (The default front-end request includes all of them.)
+
 ## Production
 
 ### Restore db-backup
