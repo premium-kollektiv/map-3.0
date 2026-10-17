@@ -104,6 +104,23 @@ Coordinates are looked up via OpenStreetMap Nominatim by `php app/cli.php update
 - Items whose only offer type is *Sprecher* are located by city only.
 - An item that has not been geocoded yet (for example right after the first sync) is sorted out until `update geo` has run.
 
+#### Checking whether an address can be located
+
+Anyone with access to the Collmex data can simulate the lookup in a browser, using the same query as `BaseTask::getCoordinatesViaNominatim`:
+
+```
+https://nominatim.openstreetmap.org/search.php?format=jsonv2&limit=1&street=STREET+HOUSENUMBER&city=CITY&country=Germany&postalcode=ZIP
+```
+
+- `street`: the Collmex street field as is, spaces replaced by `+` (for example `Pariser+Platz+1`).
+- `postalcode`: digits only, as the sync strips all other characters from the zip.
+- `country`: `Germany` for `DE`, `Austria` for `AT`, `Switzerland` for `CH` (see `BaseTask::countryMapper`).
+- For items whose only offer type is *Sprecher*, leave `street=` and `postalcode=` empty, as only the city is used for them.
+
+If the response contains `"lat"` and `"lon"`, the address can be located. If it is just `[]`, Nominatim does not find the address, which is why the item is missing on the map. Typically this is a typo or a missing house number, zip or city, and correcting it in Collmex fixes it. The next sync resets the retry counter for changed addresses.
+
+If the address is found in the browser but is still missing on the map, the lookup in the app may have failed temporarily or given up after 20 attempts. Check `lat`, `lng` and `geolocate_count` of the item in the `item` table. The lookup is meant for occasional manual checks, Nominatim blocks heavy usage.
+
 ### Things to know
 
 - **Product names.** The product filter compares the requested names with `product.name` in the database (case-insensitive), so the names the front-end sends (`cola`, `bier`, `frohlunder`, `muntermate`) have to match the product names in the database. They do for the seed data in `docs/database/schema.sql`. Note that the fallback used when `products` is omitted from the request lists `holunder` instead of `frohlunder`, so a request without `products` would never match Frohlunder items.
